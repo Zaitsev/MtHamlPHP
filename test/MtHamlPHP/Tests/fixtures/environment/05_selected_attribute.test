@@ -1,0 +1,31 @@
+--FILE--
+<?php
+$env = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+echo $env->compileString($parts['HAML'], "$file.haml");
+
+--HAML--
+:php
+  $c='c-php'; $e = 'e-php'; $id = 'php1';
+  $bool_true=true; $bool_false=false;
+%input(selected checked="#{$e}")
+%input(selected="true")
+%input{:selected}
+%input{:selected=>if(true), :checked=>if($bool_false), :attribute=>if(!$bool_false)}
+
+
+--EXPECT--
+<?php
+   $c='c-php'; $e = 'e-php'; $id = 'php1';
+   $bool_true=true; $bool_false=false;
+?>
+<input selected  checked="<?php echo($e) ;?>">
+<input selected="true">
+<input selected>
+<input <?php echo ((true)? "selected" :"") ;?> <?php echo (($bool_false)? "checked" :"") ;?> <?php echo ((!$bool_false)? "attribute" :"") ;?>>
+
+--EXECUTED--
+<input selected  checked="e-php">
+<input selected="true">
+<input selected>
+<input selected  attribute>
+

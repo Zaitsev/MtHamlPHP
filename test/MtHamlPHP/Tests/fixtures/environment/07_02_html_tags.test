@@ -1,0 +1,28 @@
+--FILE--
+<?php
+ $options =  array(
+      'enable_escaper' => false
+      ,"cdata"=>false
+  );
+  $more_options = array(
+      'filename'=>"$file.haml",
+  );
+$haml = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+echo $haml->compileString($parts['HAML'], $more_options);
+
+
+--HAML--
+%div
+  <p> hello </p>
+<div>
+  %p hello
+</div>
+
+--EXPECT--
+<div>
+  <p> hello </p>
+</div>
+<div>
+  <p>hello</p>
+</div>
+

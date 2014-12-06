@@ -1,0 +1,92 @@
+--FILE--
+<?php
+$env = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+$env->addFilter('haml', new MtHamlPHP\Filter\Haml());
+echo $env->compileString($parts['HAML'], "$file.haml");
+
+--HAML--
+:haml
+  use_runtime => false
+  enable_escaper => false
+  escape_attrs => true
+  i.class.helper=> <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>
+  i.id.helper=> <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>
+  i.custom_attr.helper => <?php /* %1$s.%2$s */ echo custom_attr('%1$s','%2$s',%3$s) ?>
+  class.helper => <?php /* %1$s.%2$s */ echo all_class('%1$s','%2$s',%3$s) ?>
+  id.helper => <?php /* %1$s.%2$s */ echo all_id('%1$s','%2$s',%3$s) ?>
+  custom.helper => <?php /* %1$s.%2$s */ echo all_attr('%1$s','%2$s',%3$s) ?>
+  data-.helper => <?php /* %1$s.%2$s */ echo render_data('%1$s','%2$s',%3$s) ?>
+:php <?
+  function my_walk_recursive(array $array, &$fl, $path = 'data') {
+      foreach ($array as $k => $v) {
+          if (!is_array($v)) {
+              $fl[] = $path.'-'.$k.'="'.$v.'"';
+          }
+          else {
+              my_walk_recursive($v, $fl, !empty($k) ? $path.'-'.$k : $path);
+          }
+      }
+  }
+  function render_array($tag,$attr,$arr){
+      $fl=array() ; array_walk_recursive($arr, function($i,$k) use (&$fl) {$fl[]=$i;});  echo $attr.'="'.implode(' ',$fl).'"';
+   }
+  function render_data($tag,$attr,$arr){
+     $fl=array() ;     my_walk_recursive($arr,$fl);      echo implode(' ',$fl);
+  }
+  function custom_attr ($tag,$attr,$arr) {render_array($tag,$attr,$arr);}
+  function all_class ($tag,$attr,$arr) {render_array($tag,$attr,$arr);}
+  function all_id ($tag,$attr,$arr) {render_array($tag,$attr,$arr);}
+  function all_attr ($tag,$attr,$arr) {$attr !== 'data' ? render_array($tag,$attr,$arr) : render_data($tag,$attr,$arr);}
+  $c='c-php';$d='d-php'; $e = 'e-php'; $f='f-php';
+   $id = 'php1';$bool_true=true;
+%i.a.b{:class=>['c',$d, $bool_true ? $e : $f]}
+%p.a.b{:id=>['c'.$c,$d],:class=>array($c,'d'), :custom_attr_p=>[$c,$d]}
+%i.a.b{:class=>['c','d', true ? 'e': 'f', false ? 'g':'h']}
+%i.a.b(class="#{'c d'}")
+%i{:data=>['c'=>$c,'d'=>$d,'inset'=>['e'=>$e,'f'=>$f]]}
+%i#id.a.b{:id=>[$c,'2'],:class=>['c','d'] }
+%i{:custom_attr=>['a','b']}
+
+
+--EXPECT--
+<?php
+   function my_walk_recursive(array $array, &$fl, $path = 'data') {
+       foreach ($array as $k => $v) {
+           if (!is_array($v)) {
+               $fl[] = $path.'-'.$k.'="'.$v.'"';
+           }
+           else {
+               my_walk_recursive($v, $fl, !empty($k) ? $path.'-'.$k : $path);
+           }
+       }
+   }
+   function render_array($tag,$attr,$arr){
+       $fl=array() ; array_walk_recursive($arr, function($i,$k) use (&$fl) {$fl[]=$i;});  echo $attr.'="'.implode(' ',$fl).'"';
+    }
+   function render_data($tag,$attr,$arr){
+      $fl=array() ;     my_walk_recursive($arr,$fl);      echo implode(' ',$fl);
+   }
+   function custom_attr ($tag,$attr,$arr) {render_array($tag,$attr,$arr);}
+   function all_class ($tag,$attr,$arr) {render_array($tag,$attr,$arr);}
+   function all_id ($tag,$attr,$arr) {render_array($tag,$attr,$arr);}
+   function all_attr ($tag,$attr,$arr) {$attr !== 'data' ? render_array($tag,$attr,$arr) : render_data($tag,$attr,$arr);}
+   $c='c-php';$d='d-php'; $e = 'e-php'; $f='f-php';
+    $id = 'php1';$bool_true=true;
+?>
+<i <?php /* i.class */ echo render_array('i','class',array('a','b',['c',$d, $bool_true ? $e : $f])) ?> ></i>
+<p <?php /* p.class */ echo all_class('p','class',array('a','b',array($c,'d'))) ?>  <?php /* p.id */ echo all_id('p','id',array(['c'.$c,$d])) ?>  <?php /* p.custom_attr_p */ echo all_attr('p','custom_attr_p',array([$c,$d])) ?> ></p>
+<i <?php /* i.class */ echo render_array('i','class',array('a','b',['c','d', true ? 'e': 'f', false ? 'g':'h'])) ?> ></i>
+<i <?php /* i.class */ echo render_array('i','class',array('a','b','c d')) ?> ></i>
+<i <?php /* i.data */ echo all_attr('i','data',array(['c'=>$c,'d'=>$d,'inset'=>['e'=>$e,'f'=>$f]])) ?> ></i>
+<i <?php /* i.id */ echo render_array('i','id',array('id',[$c,'2'])) ?>  <?php /* i.class */ echo render_array('i','class',array('a','b',['c','d'])) ?> ></i>
+<i <?php /* i.custom_attr */ echo custom_attr('i','custom_attr',array(['a','b'])) ?> ></i>
+
+--EXECUTED--
+<i class="a b c d-php e-php" ></i>
+<p class="a b c-php d"  id="cc-php d-php"  custom_attr_p="c-php d-php" ></p>
+<i class="a b c d e h" ></i>
+<i class="a b c d" ></i>
+<i data-c="c-php" data-d="d-php" data-inset-e="e-php" data-inset-f="f-php" ></i>
+<i id="id c-php 2"  class="a b c d" ></i>
+<i custom_attr="a b" ></i>
+

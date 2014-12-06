@@ -1,0 +1,21 @@
+--FILE--
+<?php
+ $options =  array(
+      'enable_escaper' => false
+      ,"cdata"=>false
+  );
+  $more_options = array(
+      'filename'=>"$file.haml",
+      'prepare'=>true
+  );
+$haml = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+echo $haml->compileString($parts['HAML'], $more_options);
+
+
+--HAML--
+{% $address='http://program-think.blogspot.com';$name='scil' %}
+%div my name is {= $name =}, i love this IT blog {= $address =} which is blocked by GFW
+
+--EXPECT--
+<div>my name is scil, i love this IT blog http://program-think.blogspot.com which is blocked by GFW</div>
+

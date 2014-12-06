@@ -1,0 +1,33 @@
+--FILE--
+<?php
+$env = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+echo $env->compileString($parts['HAML'], "$file.haml");
+
+--HAML--
+:php
+  $c='c-php'; $e = 'e-php'; $id = 'php1';$bool_true=false;$data_id=1;
+  $data_array = array('ok'=>1,'no'=>$data_id+1);
+%i.a.b{:data=>['a'=>'a','b'=>$c, 'e'=> true ? $c : $e]}
+%i.a.b{:data=>{'a'=>'a','b'=>$c, 'e'=> true ? $c : $e}}
+%i.a.b{:data=>array('a'=>'a','b'=>$c, 'e'=> true ? $c : $e)}
+%i.a.b(data-a="#{$c}" data="#{array($e=>$c)}")
+%input{:data=>$data_array}
+
+--EXPECT--
+<?php
+   $c='c-php'; $e = 'e-php'; $id = 'php1';$bool_true=false;$data_id=1;
+   $data_array = array('ok'=>1,'no'=>$data_id+1);
+?>
+<i class="a b"<?php foreach(array('a'=>'a','b'=>$c, 'e'=> true ? $c : $e) as $k=>$v) {echo " data-$k=\"$v\" ";} ?>></i>
+<i class="a b"<?php foreach(array('a'=>'a','b'=>$c, 'e'=> true ? $c : $e) as $k=>$v) {echo " data-$k=\"$v\" ";} ?>></i>
+<i class="a b"<?php foreach(array('a'=>'a','b'=>$c, 'e'=> true ? $c : $e) as $k=>$v) {echo " data-$k=\"$v\" ";} ?>></i>
+<i class="a b" data-a="<?php echo($c) ;?>"<?php foreach(array($e=>$c) as $k=>$v) {echo " data-$k=\"$v\" ";} ?>></i>
+<input<?php foreach($data_array as $k=>$v) {echo " data-$k=\"$v\" ";} ?>>
+
+--EXECUTED--
+<i class="a b" data-a="a"  data-b="c-php"  data-e="c-php" ></i>
+<i class="a b" data-a="a"  data-b="c-php"  data-e="c-php" ></i>
+<i class="a b" data-a="a"  data-b="c-php"  data-e="c-php" ></i>
+<i class="a b" data-a="c-php" data-e-php="c-php" ></i>
+<input data-ok="1"  data-no="2" >
+

@@ -1,0 +1,21 @@
+--FILE--
+<?php
+$mthaml = new MtHaml\Environment('php', array('mthaml_variable' => '$mthaml'));
+
+$source = $mthaml->compileString($parts['HAML'], "$file.haml");
+$foo = '-foo-';
+eval('?>'.$source);
+
+--HAML--
+%body
+  :php
+    echo "<strong>a</strong>\n";
+  :php
+    $x = 5;
+    echo "<strong>{$x}#{$foo}</strong>\n";
+--EXPECT--
+<body>
+  <strong>a</strong>
+  <strong>5-foo-</strong>
+</body>
+

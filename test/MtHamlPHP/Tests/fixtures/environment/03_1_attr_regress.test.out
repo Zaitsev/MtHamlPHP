@@ -1,0 +1,1 @@
+<a href="<?php echo($str) ;?> &page=1"></a>

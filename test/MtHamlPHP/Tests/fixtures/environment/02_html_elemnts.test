@@ -1,0 +1,28 @@
+--FILE--
+<?php
+$env = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+echo $env->compileString($parts['HAML'], "$file.haml");
+
+--HAML--
+%gee
+  %whiz
+    Wow this is cool!
+%p
+  <div id="blah">Blah!</div>
+%title
+  = @title
+  \= @title
+--EXPECT--
+<gee>
+  <whiz>
+    Wow this is cool!
+  </whiz>
+</gee>
+<p>
+  <div id="blah">Blah!</div>
+</p>
+<title>
+  <?php echo @title; ?>
+  = @title
+</title>
+

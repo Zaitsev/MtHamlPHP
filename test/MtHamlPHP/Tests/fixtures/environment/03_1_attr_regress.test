@@ -1,0 +1,21 @@
+--FILE--
+<?php
+$env = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+echo $env->compileString($parts['HAML'], "$file.haml");
+
+--HAML--
+:haml
+    use_runtime=>false
+:php
+    $str='a/';
+%a{:href=>"#{$str}&page=1"}
+
+--EXPECT--
+<?php
+     $str='a/';
+?>
+<a href="<?php echo($str) ;?>&page=1"></a>
+
+--EXECUTED--
+<a href="a/&page=1"></a>
+
