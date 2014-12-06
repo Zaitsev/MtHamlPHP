@@ -65,16 +65,7 @@ PHP:
 ``` php
 <?php
 $haml = new MtHaml\Environment('php');
-$executor = new MtHaml\Support\Php\Executor($haml, array(
-    'cache' => sys_get_temp_dir().'/haml',
-));
-
-// Compiles and executes the HAML template, with variables given as second
-// argument
-$executor->display('template.haml', array(
-    'var' => 'value',
-));
-
+$compiled = $haml->compileString($haml_template, "filename");
 ```
 
 [Twig][4]:
@@ -82,17 +73,11 @@ $executor->display('template.haml', array(
 ``` php
 <?php
 $haml = new MtHaml\Environment('twig', array('enable_escaper' => false));
+$compiled = $haml->compileString($haml_template, "filename");
 
-// Use a custom loader, whose responsibility is to convert HAML templates
-// to Twig syntax, before handing them out to Twig:
-$hamlLoader = new MtHaml\Support\Twig\Loader($haml, $twig->getLoader());
-$twig->setLoader($hamlLoader);
-
-// Register the Twig extension before executing a HAML template
+// Register the MtHaml extension before executing the template:
 $twig->addExtension(new MtHaml\Support\Twig\Extension());
-
-// Render templates as usual
-$twig->render('template.haml', ...);
+$twig->render(...);
 ```
 
 See [examples][7] and [MtHaml with Twig](https://github.com/arnaud-lb/MtHaml/wiki/Use-MtHaml-with-Twig)
@@ -133,7 +118,7 @@ Using [Twig][4] in HAML gives more control over what can be executed, what varia
 
 ### Integration in Twig
 
-MtHaml comes with an example Twig_Loader that will automatically convert HAML into Twig at loading time (Twig will then compile the resulting Twig script and cache it). Templates with a `.haml` extension, or whose source starts with `{% haml %}` will be converted, and the others will be left untouched.
+MtHaml comes with an example Twig_Loader that will automatically convert HAML into Twig at loading time (Twig will then compile the resulting Twig script and cache it). Scripts starting with `{% haml %}` will be parsed as HAML, and the others will be left untouched.
 
 The loader acts as a proxy and takes an other loader as parameter:
 
@@ -143,7 +128,7 @@ The loader acts as a proxy and takes an other loader as parameter:
 $haml = new MtHaml\Environment(...);
 
 $twig_loader = new Twig_Loader_Filesystem(...);
-$twig_loader = new MtHaml\Support\Twig\Loader($haml, $twig_loader);
+$twig_loader = new MtHaml\Support\Twig\Loader($twig_loader);
 ```
 
 ### Runtime support
@@ -177,7 +162,7 @@ Helpers in HAML/Ruby are just ruby functions exposed to templates.
 Any function can be made available to HAML templates by the target language
 (the function only have to be available at runtime).
 
-In HAML/Twig you can use all of Twig's functions, filters, and tags. In HAML/PHP, you can use all PHP functions.
+In HAML/Twig you can use all of Twig's functions, filters and tags. In PHP, you can use all PHP functions.
 
 ## Filters
 
@@ -232,20 +217,18 @@ $env = new MtHaml\Environment('twig', array(
 
 ## Sass
 
-[Sass][6] can be used in PHP projects without problem. It only depends on Ruby and does not need to be installed on production servers. So MtHaml will not re-implement Sass.
+[Sass][6] can be used in PHP projects without problem.It only depends on Ruby and does not need to be installed on production servers. So MtHaml will not re-implement Sass.
 
 ## Frameworks and CMS support
  
- - CakePHP: https://github.com/TiuTalk/haml
  - Drupal: https://github.com/antoinelafontaine/oxide
  - FuelPHP: https://github.com/fuel/parser
- - Laravel (PHP): https://github.com/BKWLD/laravel-haml
- - Laravel (Twig): https://github.com/SimonDegraeve/laravel-twigbridge
  - PHPixie: https://github.com/dracony/PHPixie-HAML
  - Silex: https://github.com/arnaud-lb/Silex-MtHaml
- - Sprockets-PHP: https://github.com/Nami-Doc/Sprockets-PHP
  - Symfony2: https://github.com/arnaud-lb/MtHamlBundle
  - Zend Framework 1: https://github.com/bonndan/mthaml-zf1
+ - Sprockets-PHP: https://github.com/Nami-Doc/Sprockets-PHP
+
 
 Add yours: https://github.com/arnaud-lb/MtHaml/edit/master/README.markdown
 

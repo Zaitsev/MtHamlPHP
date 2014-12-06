@@ -13,13 +13,13 @@
 >
   <testsuites>
     <testsuite name="MtHaml Test Suite">
-      <directory>./test/MtHaml/</directory>
+      <directory>./test/MtHamlPHP/</directory>
     </testsuite>
   </testsuites>
 
   <filter>
     <whitelist>
-      <directory suffix=".php">./lib/MtHaml/</directory>
+      <directory suffix=".php">./lib/MtHamlPHP/</directory>
     </whitelist>
   </filter>
 </phpunit>
