@@ -16,7 +16,8 @@ use MtHaml\Node\Filter;
 
 class PhpRenderer extends \MtHamlMore\NodeVisitor\PhpRenderer
 {
-
+    public $env;
+    public $reduceRuntimeArrayTolerant=false;
     /**
      * @param Tag $tag
      */
@@ -31,20 +32,24 @@ class PhpRenderer extends \MtHamlMore\NodeVisitor\PhpRenderer
             $property->setAccessible(true);
             $property->setValue($this,$v);
         }
-        if ($k=='uses')
-        {
-            $snipHouse = $this->env->currentMoreEnv->getSnipHouse();
-            $snipHouse->addUse($v);
-
-            Dbg::emsgd($snipHouse->getUses());
-            //echo (dirname($this->env->currentMoreEnv['filename']));
-        }
+//        if ($k=='uses')
+//        {
+//            $snipHouse = $this->env->currentMoreEnv->getSnipHouse();
+//            $snipHouse->addUse($v);
+//
+//            Dbg::emsgd($snipHouse->getUses());
+//            //echo (dirname($this->env->currentMoreEnv['filename']));
+//        }
         $this->env->setOption($k, $v);
+    }
+    public function __construct(Environment $env){
+        parent::__construct($env);
     }
 
     protected function renderDynamicAttributes(Tag $tag)
     {
         $escape_attrs = $this->env->getOption('enable_escaper') && $this->env->getOption('escape_attrs');
+        //Dbg::emsgd($escape_attrs);
         if ($this->env->getOption('use_runtime') === true) {
             parent::renderDynamicAttributes($tag);
             return;

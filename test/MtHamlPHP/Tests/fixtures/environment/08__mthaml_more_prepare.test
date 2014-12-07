@@ -1,0 +1,33 @@
+--FILE--
+<?php
+ $options =  array(
+      'enable_escaper' => false
+      ,"cdata"=>false
+  );
+  $more_options = array(
+      'filename'=>"$file.haml",
+      'prepare'=>true
+  );
+$haml = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+echo $haml->compileString($parts['HAML'], $more_options);
+
+--HAML--
+{% $ss = '!ssss!' %}
+%i
+    %s {= $ss =}
+    %i  text{= $ss =}sdfas
+    {= $ss =}
+:php <?
+    echo $sss;
+%s
+--EXPECT--
+<i>
+  <s>!ssss!</s>
+  <i>text!ssss!sdfas</i>
+  !ssss!
+</i>
+<?php
+  echo $sss;
+?>
+<s></s>
+

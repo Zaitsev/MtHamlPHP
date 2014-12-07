@@ -1,0 +1,2 @@
+<?php $address='http://program-think.blogspot.com';$name='scil' ; ?>
+%div my name is <?php echo 1; ?>, i love this IT blog <?php echo 1; ?> which is blocked by GFW

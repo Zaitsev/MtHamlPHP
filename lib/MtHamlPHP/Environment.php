@@ -2,8 +2,8 @@
 
 namespace MtHamlPHP;
 
-use Dbg;
-use MtHamlPHP\Target\Php;
+use MtHamlPHP\Dbg;
+//use MtHamlPHP\Target\Php;
 use MtHamlPHP\Target\PhpMore;
 //use MtHaml\Target\Twig;
 //use MtHaml\NodeVisitor\Escaping as EscapingVisitor;
@@ -15,16 +15,6 @@ use MtHaml\Exception;
 
 class Environment extends \MtHamlMore\Environment
 {
-//    protected $options = array(
-//        'format' => 'html5',
-//        'enable_escaper' => true,
-//        'escape_html' => true,
-//        'escape_attrs' => true,
-//        'cdata' => true,
-//        'autoclose' => array('meta', 'img', 'link', 'br', 'hr', 'input', 'area', 'param', 'col', 'base'),
-//        'charset' => 'UTF-8',
-//    );
-
     protected $filters = array(
         'haml' => 'MtHamlPHP\\Filter\\Haml',
         'css' => 'MtHaml\\Filter\\Css',
@@ -37,51 +27,6 @@ class Environment extends \MtHamlMore\Environment
         'twig' => 'MtHaml\\Filter\\Twig',
     );
 
-//    protected $target;
-
-
-//    public function __construct($target, array $options = array(), $filters = array())
-//    {
-//        $this->target = $target;
-//        $this->options = $options + $this->options;
-//        $this->filters = $filters + $this->filters;
-//    }
-
-//    public function compileString($string, $filename)
-//    {
-//        $target = $this->getTarget();
-//
-//        $node = $target->parse($this, $string, $filename);
-//
-//        foreach($this->getVisitors() as $visitor) {
-//            $node->accept($visitor);
-//        }
-//
-//        $code = $target->compile($this, $node, $filename);
-//
-//        return $code;
-//    }
-
-//    public function getOptions()
-//    {
-//        return $this->options;
-//    }
-//
-//    public function getOption($name)
-//    {
-//        return $this->options[$name];
-//    }
-
-    /**
-     * Returns a filter
-     *
-     * @param $name A name of filter
-     *
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
-     *
-     * @return FilterInterface
-     */
     public function setOption($k,$v)
     {
         if ($v === 'true' ) {$v = true;}
@@ -94,7 +39,7 @@ class Environment extends \MtHamlMore\Environment
     public function getFilter($name)
     {
         //vlz+ remove php open tag if present;
-        $name = rtrim(str_replace(array('<?php','<?'),"",$name));
+        $name = rtrim(str_replace(array('<?php','<?','<<<php'),"",$name));
         if (!isset($this->filters[$name])) {
             throw new \InvalidArgumentException(sprintf('Unknown filter name "%s"', $name));
         }
@@ -112,20 +57,7 @@ class Environment extends \MtHamlMore\Environment
 
         return $filter;
     }
-//    public function getVisitors()
-//    {
-//        $visitors = array();
-//
-//        $visitors[] = $this->getAutoclosevisitor();
-//        $visitors[] = $this->getMidblockVisitor();
-//        $visitors[] = $this->getMergeAttrsVisitor();
-//
-//        if ($this->getOption('enable_escaper')) {
-//            $visitors[] = $this->getEscapingVisitor();
-//        }
-//
-//        return $visitors;
-//    }
+
     public function getTarget()
     {
         $target = $this->target;
@@ -141,54 +73,64 @@ class Environment extends \MtHamlMore\Environment
 //                    $target = new Twig;
 //                    break;
                 default:
-                    throw new Exception(sprintf('Unknown target language: %s', $target));
+                    throw new \MtHaml\Exception(sprintf('Unknown target language: %s', $target));
             }
             $this->target = $target;
         }
         return $target;
     }
 
-//    public function addFilter($name, $filter)
-//    {
-//        if (!is_string($filter) && !(is_object($filter) && $filter instanceof FilterInterface)) {
-//            throw new \InvalidArgumentException('Filter should be a class name or an instance of FilterInterface');
-//        }
-//
-//        $this->filters[$name] = $filter;
-//
-//        return $this;
-//    }
+
+    protected function prepare($string, $filename)
+    {
+        $prepareWork = false;
+
+        //  There seems to be some unexpected behavior when using the /m modifier when the line terminators are win32 or mac format.
+        //  http://www.php.net/manual/en/function.preg-replace.php#85416
+        $string = str_replace(array("\r\n", "\r"), "\n", $string);
+        //workaround for:
+        //               http://stackoverflow.com/questions/1908175/is-there-a-way-to-force-a-new-line-after-php-closing-tag-when-embedded-among
+        //               http://stackoverflow.com/questions/4410704/why-would-one-omit-the-close-tag
+
+        $changed = preg_replace(array(
+                '/<\?/',
+                '/\{=\s*(.*?)\s*=\}\r\n/', //CRLF
+                '/\{=\s*(.*?)\s*=\}\r/', //CR
+                '/\{=\s*(.*?)\s*=\}\n/', //LF
+                '/\{=\s*(.*?)\s*=\}/', //inline
+                '/^\{%\s*([^}]+)\s*%\}$/m',
+            ),
+            array(
+                '~~~',
+                '<?php echo \1."\r\n";?>'.PHP_EOL,
+                '<?php echo \1."\r"; ?>'.PHP_EOL,
+                '<?php echo \1."\n"; ?>'.PHP_EOL,
+                '<?php echo \1; ?>',
+                '<?php \1; ?>',
+            ), $string, -1, $count);
+        if ($count > 0) {
+            $prepareWork = true;
+            $filename = $filename . '.prepare.haml';
+            @unlink($filename);
+            file_put_contents($filename, $changed);
+            file_put_contents($filename.'prep.php', $changed);
+            ob_start();
+            try {
+                @include $filename;
+                $string = ob_get_clean();
+            } catch (Exception $e) {
+                ob_end_clean();
+                throw new  \MtHaml\Exception("prepare file $filename : $e");
+            }
+            // restore <?php
+            $string = str_replace('~~~', '<?', $string);
 
 
+        }
 
+        return array($string, $filename, $prepareWork);
 
-
-//    public function getEscapingVisitor()
-//    {
-//        $html = EscapingVisitor::ESCAPE_TRUE;
-//        if (!$this->getOption('escape_html')) {
-//            $html = EscapingVisitor::ESCAPE_FALSE;
-//        }
-//
-//        $attrs = EscapingVisitor::ESCAPE_TRUE;
-//        if ('once' === $this->getOption('escape_attrs')) {
-//            $attrs = EscapingVisitor::ESCAPE_ONCE;
-//        } else if (!$this->getOption('escape_attrs')) {
-//            $attrs = EscapingVisitor::ESCAPE_FALSE;
-//        }
-//
-//        return new EscapingVisitor($html, $attrs);
-//    }
-
-//    public function getAutocloseVisitor()
-//    {
-//        return new Autoclose($this->getOption('autoclose'));
-//    }
-//
-//    public function getMidblockVisitor()
-//    {
-//        return new Midblock($this->getTarget()->getOption('midblock_regex'));
-//    }
+    }
 
     public function getMergeAttrsVisitor()
     {
