@@ -3,18 +3,15 @@ namespace MtHamlPHP\NodeVisitor;
 use MtHamlPHP\Dbg;
 use MtHamlPHP\Environment;
 use MtHaml\Node\Insert;
-use MtHaml\Node\Run;
 use MtHaml\Node\InterpolatedString;
-use MtHaml\Node\Statement;
 use MtHaml\Node\Tag;
 use MtHaml\Node\ObjectRefClass;
 use MtHaml\Node\NodeAbstract;
 use MtHaml\Node\ObjectRefId;
 use MtHaml\Node\TagAttributeInterpolation;
-use MtHaml\Node\TagAttributeList;
-use MtHaml\Node\Filter;
 
 class PhpRenderer extends \MtHamlMore\NodeVisitor\PhpRenderer
+//class PhpRenderer extends \MtHamlPHP\Ext\MtHamlMore\PhpRenderer
 {
     public $env;
     public $reduceRuntimeArrayTolerant=false;
@@ -42,9 +39,9 @@ class PhpRenderer extends \MtHamlMore\NodeVisitor\PhpRenderer
 //        }
         $this->env->setOption($k, $v);
     }
-    public function __construct(Environment $env){
-        parent::__construct($env);
-    }
+//    public function __construct(Environment $env){
+//        parent::__construct($env);
+//    }
 
     protected function renderDynamicAttributes(Tag $tag)
     {
@@ -91,7 +88,6 @@ class PhpRenderer extends \MtHamlMore\NodeVisitor\PhpRenderer
 
         //print_r($list);
         $tag_name = $tag->getTagName();
-
         foreach ($list as $attr => $val) {
             $helper = $this->env->getOption($tag_name . '.' . $attr . ".helper");
             if (!$helper) $helper = $this->env->getOption($attr . ".helper");
@@ -102,17 +98,17 @@ class PhpRenderer extends \MtHamlMore\NodeVisitor\PhpRenderer
                 $r = array();
                 foreach ($val as $ch) {
                     if (trim($ch[1]) == false) continue;
-                    if ($ch[0] == "echo") {
-                        $r[] = $ch[1];
-                    } else {
-                        $r[] = "'" . $ch[1] . "'";
-                    }
+	                if ($ch[0] == "echo") {
+		                $r[] = $ch[1];
+	                } else {
+		                $r[] = "'" . $ch[1] . "'";
+	                }
                 }
-                $this->raw(' ' . sprintf($helper, $tag->getTagName(), $attr, 'array(' . join(',', $r) . ')') . ' ');
+	            $this->raw(' ' . sprintf($helper, $tag->getTagName(), $attr, 'array(' . join(',', $r) . ')') . ' ');
             } else {
 
 
-                if ($attr == 'data') {
+		        if ($attr == 'data') {
                     $glue_string = ' data-';
                     $r = array();
                     $text = '';

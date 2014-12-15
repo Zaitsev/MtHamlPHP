@@ -1,4 +1,3 @@
-node_modules/
 composer.lock
 examples/example-php.haml.php
 tags

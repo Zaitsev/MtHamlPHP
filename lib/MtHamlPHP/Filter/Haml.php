@@ -7,8 +7,9 @@ use Symfony\Component\Yaml\Yaml;
 use MtHaml\NodeVisitor\RendererAbstract as Renderer;
 use MtHaml\Node\Filter;
 use MtHaml\Exception;
+use \MtHaml\Filter\Plain;
 
-class Haml extends \MtHaml\Filter\Plain
+class Haml extends Plain
 {
     public function optimize(Renderer $renderer, Filter $node, $options)
     {

@@ -1,0 +1,17 @@
+--FILE--
+<?php
+$haml = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+echo $haml->compileString($parts['HAML'], $more_options);
+
+
+--HAML--
+%input:text(class="cls")
+%input:text#id(class="cls")
+%input:submit#id(class="cls" value="valu")
+%input:text#id(class="cls" type="search")
+--EXPECT--
+<input class="cls" type="text">
+<input id="id" class="cls" type="text">
+<input id="id" class="cls" value="valu" type="submit">
+<input id="id" class="cls" type="text">
+

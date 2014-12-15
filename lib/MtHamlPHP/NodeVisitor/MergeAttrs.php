@@ -7,8 +7,9 @@ use MtHaml\Node\TagAttribute;
 use MtHaml\Node\Text;
 use MtHaml\Node\InterpolatedString;
 use MtHaml\Node\Insert;
+use MtHamlMore\NodeVisitor\VisitorAbstract;
 
-class MergeAttrs extends \MtHamlMore\NodeVisitor\VisitorAbstract
+class MergeAttrs extends VisitorAbstract
 {
     protected $attrs;
     protected $tag;

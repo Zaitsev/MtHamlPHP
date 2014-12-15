@@ -11,7 +11,7 @@ use MtHamlPHP\Target\PhpMore;
 //use MtHaml\NodeVisitor\Midblock;
 use MtHamlPHP\NodeVisitor\MergeAttrs;
 //use MtHaml\Filter\FilterInterface;
-use MtHaml\Exception;
+use \MtHaml\Exception;
 
 class Environment extends \MtHamlMore\Environment
 {

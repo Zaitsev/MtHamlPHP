@@ -3,6 +3,7 @@
 namespace MtHaml\Node;
 
 use MtHaml\NodeVisitor\NodeVisitorInterface;
+use MtHaml\Node\NestAbstract;
 
 class Tag extends NestAbstract
 {
@@ -18,7 +19,17 @@ class Tag extends NestAbstract
     {
         parent::__construct($position);
         $this->tagName = $tagName;
-        $this->attributes = $attributes;
+	    $this->attributes = $attributes;
+	    if (strpos($this->tagName,':') !== false ){
+		    list($inp,$type) = explode(':',$this->tagName);
+		    if ($inp=='input') {
+			    $this->tagName = 'input';
+			    $name             = new Text( $position, 'type' );
+			    $val              = new Text( $position, $type );
+			    $new_type         = new TagAttribute( $position, $name, $val );
+			    $this->addAttribute($new_type);
+		    }
+	    }
         $this->flags = $flags;
     }
 
