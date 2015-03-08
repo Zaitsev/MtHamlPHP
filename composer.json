@@ -3,18 +3,19 @@
     "type": "library",
     "description": "HAML for PHP",
     "keywords": ["HAML"],
-    "homepage": "https://github.com/arnaud-lb/MtHaml",
+    "homepage": "https://github.com/Zaitsev/MtHamlPHP",
     "license": "MIT",
     "authors": [
         {
-            "name": "Arnaud Le Blanc",
-            "email": "arnaud.lb@gmail.com"
+            "name": "Vlad Zaitsev",
+            "email": "vladzaitsev@gmail.com"
         }
     ],
     "require": {
         "php": ">=5.3.0",
         "symfony/yaml": "~2.6",
-        "scil/mthaml-more": "~0.7"
+        "scil/mthaml-more": "~0.7",
+	    "mthaml/mthaml": "~1.6.0"
     },
     "require-dev": {
         "leafo/lessphp": "*",

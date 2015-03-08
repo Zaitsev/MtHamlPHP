@@ -15,6 +15,7 @@ class EnvironmentTest extends TestCase
         $parts = $this->parseTestFile($file);
         $describe=pathinfo($file);
         $describe="===== ".$describe['filename']." ====";
+        echo "$describe\n";
         file_put_contents($file . '.haml', $parts['HAML']);
         file_put_contents($file . '.php', $parts['FILE']);
         file_put_contents($file . '.exp', $parts['EXPECT']);
