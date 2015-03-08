@@ -19,7 +19,7 @@ class EnvironmentTest extends TestCase
         file_put_contents($file . '.haml', $parts['HAML']);
         file_put_contents($file . '.php', $parts['FILE']);
         file_put_contents($file . '.exp', $parts['EXPECT']);
-        file_put_contents($file . '.snip', $parts['SNIP']);
+        if (isset( $parts['SNIP'])) file_put_contents($file . '.snip', $parts['SNIP']);
 
         if (!empty($parts['SKIP'])) {
             $this->markTestIncomplete(
@@ -43,7 +43,7 @@ class EnvironmentTest extends TestCase
 
         $this->assertSame($parts['EXPECT'], $out,$describe);
 
-        if ($parts['EXECUTED']) {
+        if (isset($parts['EXECUTED'])) {
             ob_start();
             require $file . '.out';
             $compiled = ob_get_clean();
@@ -60,7 +60,7 @@ class EnvironmentTest extends TestCase
         unlink($file . '.haml');
         unlink($file . '.php');
         unlink($file . '.exp');
-        unlink($file . '.snip');
+        @unlink($file . '.snip');
     }
 
     public function getEnvironmentTests()
