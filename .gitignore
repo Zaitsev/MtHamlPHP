@@ -2,3 +2,4 @@
 examples/example-php.haml.php
 tags
 vendor/
+*.prepare.*php

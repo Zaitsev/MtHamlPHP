@@ -3,9 +3,14 @@
 [![Build Status](https://travis-ci.org/Zaitsev/MtHamlPHP.svg)](https://travis-ci.org/Zaitsev/MtHamlPHP)
 
 MtHaml is a PHP implementation of the [HAML language][1] which can target multiple languages.
-This is fork based on MtHaml and MtHaml-more
+This is fork based on MtHaml and MtHaml-more (both runtimes supported if needed)
 Main target of this fork - implement compiling haml files to php in IDE (to not use any runtime)
 
+### support IDE highlight
+to allow IDE recognize php code in :php section you can use it as
+```
+:php <?
+```
 
 ### runtime if statement
 ```
@@ -19,10 +24,12 @@ rendered
  
 ### allowed to mix classes as 
 ```
+%i.a.b{:class=>['c','d']}
 %i.a.b{:class=>['c','d', true ? 'e': 'f', false ? 'g':'h']}
 ```
 rendered
 ```
+<i class="a b <?php echo( implode(' ',array('c','d'))) ;?>"></i>
 <i class="a b <?php echo( implode(' ',array('c','d', true ? 'e': 'f', false ? 'g':'h'))) ;?>"></i>
 ```
 

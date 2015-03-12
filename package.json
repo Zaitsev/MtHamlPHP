@@ -1,8 +1,8 @@
 {
-    "name": "mthamlphp-vlz",
-    "description": "Compile HAML templates using MtHaml and MtHaml More, a PHP port of Haml. Fork of grunt-haml-php by Alex Luke (https://github.com/alexluke) and scil (https://github.com/scil/MtHamlMore)",
+    "name": "mthamlphp",
+    "description": "Compile HAML templates using MtHaml and MtHaml More, a PHP port of Haml. Advanced version based on Mthaml-more",
     "version": "0.3.0",
-    "homepage": "https://github.com/Zaitsev/mthaml-php-vlz.git",
+    "homepage": "https://github.com/Zaitsev/MtHamlPHP",
     "author": {
         "name": "Vlad Zaitsev",
         "email": "vladzaitsev@gmail.com"
