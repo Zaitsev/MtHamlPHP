@@ -34,9 +34,9 @@
         "mthaml/mthaml-bundle": "<1.1.0"
     },
     "autoload": {
+        "classmap": ["lib/MtHamlPHP/Node/Tag_hack.php"],
         "psr-0": {
             "MtHamlPHP": "lib/"
-        },
-        "classmap": ["lib/MtHamlPHP/Node/Tag_hack.php"]
+        }
     }
 }
