@@ -36,7 +36,7 @@
     "autoload": {
         "classmap": ["lib/MtHamlPHP/Node/Tag_hack.php"],
         "psr-0": {
-            "MtHamlPHP": "lib/"
+            "MtHamlPHP\\": "lib/"
         }
     }
 }
