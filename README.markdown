@@ -13,22 +13,22 @@ to allow IDE recognize php code in :php section you can use it as
 ```
 
 ### runtime if statement
-```
+```haml
  %input{:selected=>if(true), :checked=>if($bool_false), :attribute=>if(!$bool_false)}
 ```
 rendered
-```
+```php
 <input <?php echo ((true)? "selected" :"") ;?> <?php echo (($bool_false)? "checked" :"") ;?> <?php echo ((!$bool_false)? "attribute" :"") ;?>>
 ```
  see 05_selected_attribute.test in test/fixtures/environment directory
  
 ### allowed to mix classes as 
-```
+```haml
 %i.a.b{:class=>['c','d']}
 %i.a.b{:class=>['c','d', true ? 'e': 'f', false ? 'g':'h']}
 ```
 rendered
-```
+```php
 <i class="a b <?php echo( implode(' ',array('c','d'))) ;?>"></i>
 <i class="a b <?php echo( implode(' ',array('c','d', true ? 'e': 'f', false ? 'g':'h'))) ;?>"></i>
 ```
@@ -36,14 +36,14 @@ rendered
 ###new tag :haml for implementing custom runtime functions
 see 06_Custom_helper.test in test/fixtures/environment directory
 ###added input type
-```
+```haml
 %input:text(class="cls")
 %input:text#id(class="cls")
 %input:submit#id(class="cls" value="valu")
 %input:text#id(class="cls" type="search")
 ```
 rendered
-```
+```php
 <input class="cls" type="text">
 <input id="id" class="cls" type="text">
 <input id="id" class="cls" value="valu" type="submit">
