@@ -3,3 +3,6 @@ examples/example-php.haml.php
 tags
 vendor/
 *.prepare.*php
+*.prepare.haml
+examples/tmp*
+examples/snips/tmp*

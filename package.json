@@ -1,5 +1,5 @@
 {
-    "name": "mthamlphp",
+    "name": "Zaitsev/mthamlphp",
     "description": "Compile HAML templates using MtHaml and MtHaml More, a PHP port of Haml. Advanced version based on Mthaml-more",
     "version": "0.3.0",
     "homepage": "https://github.com/Zaitsev/MtHamlPHP",
@@ -12,7 +12,7 @@
         "url": "git://github.com/Zaitsev/grunt-haml-php-vlz.git"
     },
     "bugs": {
-        "url": "https://github.com/Zaitsev/grunt-haml-php-vlz/issues"
+        "url": "https://github.com/Zaitsev/MtHamlPHP/issues"
     },
     "licenses": [
         {
