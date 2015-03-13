@@ -27,7 +27,7 @@ rendered
 ```
 rendered
 ```php
-<i id="id_<?php echo( implode('_',array($c,'2'))) ;?>"></i>
+<i id="id_<?php echo( implode('_',array($c,'2'))) ;?>" class="a b <?php echo( implode(' ',array($c,'d'))) ;?>"></i>
 ```
 ### advanced data attribute
 ```haml
