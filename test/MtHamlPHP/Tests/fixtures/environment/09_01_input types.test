@@ -5,7 +5,7 @@ echo $haml->compileString($parts['HAML'], $more_options);
 
 
 --HAML--
-%input:text(class="cls")
+%input:text.cls
 %input:text#id(class="cls")
 %input:submit#id(class="cls" value="valu")
 %input:text#id(class="cls" type="search")
