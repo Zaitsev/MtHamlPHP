@@ -4,8 +4,13 @@
 
 MtHaml is a PHP implementation of the [HAML language](http://haml.info/) which can target multiple languages.
 This is fork based on MtHaml and MtHaml-more (both runtimes supported if needed)
-Main target of this fork - implement compiling haml files to php in IDE (to not use any runtime)
+Main target of this fork - implement compiling haml files to php in IDE (to not use any runtime).
+### differences
+This implementation based on and supports all features of [MtHaml](https://github.com/arnaud-lb/MtHaml) and [MtHaml-more](https://github.com/scil/MtHamlMore) and adds many new features.
+But its focused mostly to **compile haml files to plain PHP**, not to be used as template engine.
 
+You can use [grunt task](https://github.com/Zaitsev/grunt-mthamlphp-vlz) and [IDEA plugin](https://github.com/Zaitsev/mthamlphp-idea-plugin) to compile haml to php when editing haml-file in IDE.
+### for basic usage read [MtHaml](https://github.com/arnaud-lb/MtHaml) and [MtHaml-more](https://github.com/scil/MtHamlMore) documentation.
 ## support IDE highlight
 to allow IDE recognize php code in :php section you can use it as
 ```
