@@ -125,14 +125,35 @@ render
 ```php
 <i <?php /* i.id */ echo render_array('i','id',array('id',[$c,'2'])) ?>  <?php /* i.class */ echo render_array('i','class',array('a','b',['c','d'])) ?> ></i>
 ```
-
-
+### runtme engine selection 
+```haml
+:haml
+    use_runtime=>true
+    reduce_runtime=>false
+#div{:class => array($position,$item2['type'], $item2['urgency']) }
+:haml
+    use_runtime=>true
+    reduce_runtime=>true
+    reduce_runtime_array_tolerant=>true
+#div{:class => array($position,$item2['type'], $item2['urgency']) }
+:haml
+    use_runtime=>true
+    reduce_runtime=>true
+    reduce_runtime_array_tolerant=>false
+#div{:class => array($position,$item2['type'], $item2['urgency']) }
+```
+render
+```php
+<div <?php echo MtHaml\Runtime::renderAttributes(array(array('id', 'div'), array('class', (array($position,$item2['type'], $item2['urgency'])))), 'html5', 'UTF-8', false); ?>></div>
+<div id="div"<?php \MtHamlMoreRuntime\Runtime::renderAttribute('class',array($position,$item2['type'],$item2['urgency']) ,false,true,''); ?>></div>
+<div id="div"<?php \MtHamlMoreRuntime\Runtime::renderAttribute('class',array($position,$item2['type'],$item2['urgency']) ,false,false,''); ?>></div>
+```
 #####_see 06_Custom_helper.test in test/fixtures/environment directory for more custom helpers examples_
 
 ##added input type
 you can use any type as :type_value after input tag
 ```haml
-%input:text(class="cls")
+%input:text.cls
 %input:submit#id(value="valu")
 %input:text#id(class="cls" type="search")
 ```
