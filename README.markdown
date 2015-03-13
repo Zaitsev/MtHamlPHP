@@ -13,6 +13,12 @@ to allow IDE recognize php code in :php section you can use it as
 ```
 ### simplified array definitions 
 `['c','d']` is equeal to `array('c','d')`
+all statements are equial
+```haml
+%i.a.b{:data=>['a'=>'a','b'=>$c, 'e'=> true ? $c : $e]}
+%i.a.b{:data=>{'a'=>'a','b'=>$c, 'e'=> true ? $c : $e}}
+%i.a.b{:data=>array('a'=>'a','b'=>$c, 'e'=> true ? $c : $e)}
+```
 ### attributes mixing
 ```haml
 %i.a.b{:class=>['c',$e]}
@@ -31,9 +37,6 @@ rendered
 ```
 ### advanced data attribute
 ```haml
-:php
-  $c='c-php'; $e = 'e-php'; $id = 'php1';$bool_true=false;$data_id=1;
-  $data_array = array('ok'=>1,'no'=>$data_id+1);
 %i.a.b{:data=>['a'=>'a','b'=>$c, 'e'=> true ? $c : $e]}
 %i.a.b{:data=>{'a'=>'a','b'=>$c, 'e'=> true ? $c : $e}}
 %i.a.b{:data=>array('a'=>'a','b'=>$c, 'e'=> true ? $c : $e)}
