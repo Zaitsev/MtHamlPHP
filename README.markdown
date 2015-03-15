@@ -223,6 +223,13 @@ and executed to
    
    
 ### runtme engine selection 
+`use_runtime`  - if true, compiler will use standart runtime
+
+`reduce_runtime` if false, compiler will use MtHaml runtime, if true MtHamlMore runtime
+
+see MtHaml-More and MtHaml for more info of runtime usage;
+
+
 ```haml
 :haml
     use_runtime=>true
