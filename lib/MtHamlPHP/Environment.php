@@ -5,6 +5,7 @@ namespace MtHamlPHP;
 use MtHamlPHP\Dbg;
 //use MtHamlPHP\Target\Php;
 use MtHamlPHP\Target\PhpMore;
+
 //use MtHaml\Target\Twig;
 //use MtHaml\NodeVisitor\Escaping as EscapingVisitor;
 //use MtHaml\NodeVisitor\Autoclose;
@@ -24,26 +25,33 @@ class Environment extends \MtHamlMore\Environment
         'php' => 'MtHaml\\Filter\\Php',
         'plain' => 'MtHaml\\Filter\\Plain',
         'preserve' => 'MtHaml\\Filter\\Preserve',
-        'twig' => 'MtHaml\\Filter\\Twig',
     );
 
-    public function setOption($k,$v)
-    {
-        if ($v === 'true' ) {$v = true;}
-        if ($v === 'false' ) {$v = false;}
-        if ($k == 'reduce_runtime') $this->noReduceRuntime= !$v;
-        elseif ($k == 'reduce_runtime_array_tolerant') $this->reduceRuntimeArrayTolerant= $v;
 
-        $this->options[$k] = $v ;
+
+    public function setOption($k, $v)
+    {
+        if ($v === 'true') {
+            $v = true;
+        }
+        if ($v === 'false') {
+            $v = false;
+        }
+        if ($k == 'reduce_runtime') $this->noReduceRuntime = !$v;
+        elseif ($k == 'reduce_runtime_array_tolerant') $this->reduceRuntimeArrayTolerant = $v;
+
+        $this->options[$k] = $v;
     }
+
     public function getOption($name)
     {
-        return isset($this->options[$name]) ?  $this->options[$name] : null;
+        return isset($this->options[$name]) ? $this->options[$name] : null;
     }
+
     public function getFilter($name)
     {
         //vlz+ remove php open tag if present;
-        $name = rtrim(str_replace(array('<?php','<?','<<<php'),"",$name));
+        $name = rtrim(str_replace(array('<?php', '<?', '<<<php'), "", $name));
         if (!isset($this->filters[$name])) {
             throw new \InvalidArgumentException(sprintf('Unknown filter name "%s"', $name));
         }
@@ -66,7 +74,7 @@ class Environment extends \MtHamlMore\Environment
     {
         $target = $this->target;
         if (is_string($target)) {
-            switch($target) {
+            switch ($target) {
                 case 'php_more':
                     $target = new PhpMore;
                     break;
@@ -97,18 +105,18 @@ class Environment extends \MtHamlMore\Environment
         //               http://stackoverflow.com/questions/4410704/why-would-one-omit-the-close-tag
 
         $changed = preg_replace(array(
-                '/<\?/',
-                '/\{=\s*(.*?)\s*=\}\r\n/', //CRLF
-                '/\{=\s*(.*?)\s*=\}\r/', //CR
-                '/\{=\s*(.*?)\s*=\}\n/', //LF
-                '/\{=\s*(.*?)\s*=\}/', //inline
-                '/^\{%\s*([^}]+)\s*%\}$/m',
-            ),
+            '/<\?/',
+            '/\{=\s*(.*?)\s*=\}\r\n/', //CRLF
+            '/\{=\s*(.*?)\s*=\}\r/', //CR
+            '/\{=\s*(.*?)\s*=\}\n/', //LF
+            '/\{=\s*(.*?)\s*=\}/', //inline
+            '/^\{%\s*([^}]+)\s*%\}$/m',
+        ),
             array(
                 '~~~',
-                '<?php echo \1."\r\n";?>'.PHP_EOL,
-                '<?php echo \1."\r"; ?>'.PHP_EOL,
-                '<?php echo \1."\n"; ?>'.PHP_EOL,
+                '<?php echo \1."\r\n";?>' . PHP_EOL,
+                '<?php echo \1."\r"; ?>' . PHP_EOL,
+                '<?php echo \1."\n"; ?>' . PHP_EOL,
                 '<?php echo \1; ?>',
                 '<?php \1; ?>',
             ), $string, -1, $count);
@@ -117,7 +125,7 @@ class Environment extends \MtHamlMore\Environment
             $filename = $filename . '.prepare.haml';
             @unlink($filename);
             file_put_contents($filename, $changed);
-            file_put_contents($filename.'prep.php', $changed);
+            file_put_contents($filename . 'prep.php', $changed);
             ob_start();
             try {
                 @include $filename;
