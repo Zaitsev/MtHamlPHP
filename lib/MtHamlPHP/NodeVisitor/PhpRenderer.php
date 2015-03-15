@@ -89,10 +89,19 @@ class PhpRenderer extends \MtHamlMore\NodeVisitor\PhpRenderer
         //print_r($list);
         $tag_name = $tag->getTagName();
         foreach ($list as $attr => $val) {
-            $helper = $this->env->getOption($tag_name . '.' . $attr . ".helper");
-            if (!$helper) $helper = $this->env->getOption($attr . ".helper");
-            if (!$helper) $helper = $this->env->getOption($tag_name . '.' . "helper");
-            if (!$helper) $helper = $this->env->getOption("custom.helper");
+            $helpers = $this->env->getOption("helpers");
+
+            if ($helpers) {
+                if (isset($helpers[$tag_name][$attr])){
+                    $helper = $helpers[$tag_name][$attr];
+                }elseif(isset($helpers[$tag_name]['*'])){
+                    $helper = $helpers[$tag_name]['*'];
+                }elseif(isset($helpers['*'][$attr])){
+                    $helper = $helpers['*'][$attr];
+                }elseif(isset($helpers['*']['*'])) {
+                    $helper = $helpers['*']['*'];
+                }
+            }
             if ($helper) {
 //                print_r($val);
                 $r = array();

@@ -24,8 +24,8 @@ echo $haml->compileString($parts['HAML'], $more_options);
 
 --HAML--
 :haml
-    use_runtime=>false
-    reduce_runtime=>false
+    use_runtime     : false
+    reduce_runtime  : false
 @box
     _title this is title
     _body

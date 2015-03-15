@@ -1,0 +1,33 @@
+--FILE--
+<?php
+      function render_array($tag,$attr,$arr){
+      $fl=array() ;
+      array_walk_recursive(
+        $arr
+        , function($i,$k) use (&$fl)
+            {
+                $fl[]=$i;
+            }
+      );
+      echo $attr.'="'.implode(' ',$fl).'"';
+   }
+
+
+$env = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+$env->addFilter('haml', new MtHamlPHP\Filter\Haml());
+echo $env->compileString($parts['HAML'], "$file.haml");
+--HAML--
+:haml
+  helpers:
+    i :
+        class: <?php echo render_array('%1$s','%2$s',%3$s) ?>
+    i :
+        id :   <?php echo render_array('%1$s','%2$s',%3$s) ?>
+%i.a.b{class=>['c','d']} text
+
+--EXPECT--
+<i <?php echo render_array('i','class',array('a','b',['c','d'])) ?> >text</i>
+
+--EXECUTED--
+<i class="a b c d" >text</i>
+

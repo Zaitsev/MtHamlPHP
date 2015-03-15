@@ -7,21 +7,43 @@ use Symfony\Component\Yaml\Yaml;
 use MtHaml\NodeVisitor\RendererAbstract as Renderer;
 use MtHaml\Node\Filter;
 use MtHaml\Exception;
-use \MtHaml\Filter\Plain;
+use MtHaml\Filter\Plain;
 
 class Haml extends Plain
 {
-    public function optimize(Renderer $renderer, Filter $node, $options)
+//    public function optimize(Renderer $renderer, Filter $node, $options)
+//    {
+//        $this->renderFilter($renderer, $node, $options);
+//    }
+
+    static public function setOptions($node, \MtHamlPHP\Environment $env)
     {
-        $this->renderFilter($renderer, $node, $options);
+
+        $yaml = "runtime:\n" . self::getContent($node);
+        $array = Yaml::parse($yaml);
+        if (is_array($array['runtime'])) {
+            foreach ($array['runtime'] as $key => $val) {
+                if (!empty($key)) {
+                    $env->setOption($key, $val);
+                }
+            }
+        }
+    }
+    protected function renderFilter(Renderer $renderer, Filter $node){
+        $yaml = "runtime:\n" . self::getContent($node);
+        $array = Yaml::parse($yaml);
+        if (is_array($array['runtime'])) {
+            foreach ($array['runtime'] as $key => $val) {
+                if (!empty($key)) {
+                    $renderer->envSetOption($key, $val);
+                }
+            }
+        }
     }
 
-    protected function renderFilter(Renderer $renderer, Filter $node)
+    protected function _renderFilter(Renderer $renderer, Filter $node)
     {
-//        $yaml = "\nhaml:\n".$this->getContent($node);
-//        //Dbg::emsgd($yaml);
-//        $array=Yaml::parse($yaml);
-//        Dbg::emsgd($array['haml']);
+
         //Dbg::emsgd($array);
         foreach ($node->getChilds() as $line) {
             foreach ($line->getContent()->getChilds() as $child) {
@@ -40,9 +62,12 @@ class Haml extends Plain
 //
 //                        }
 //                    }
+
                     $renderer->envSetOption($key, $val);
                 }
             }
         }
+        //Dbg::emsgd($renderer->env);
+
     }
 }

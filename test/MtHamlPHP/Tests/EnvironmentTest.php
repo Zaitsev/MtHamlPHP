@@ -6,6 +6,7 @@ use MtHaml\Parser;
 use MtHaml\NodeVisitor\Printer;
 
 require_once __DIR__ . '/TestCase.php';
+//error_reporting(E_ALL);
 
 class EnvironmentTest extends TestCase
 {
@@ -60,7 +61,9 @@ class EnvironmentTest extends TestCase
         unlink($file . '.haml');
         unlink($file . '.php');
         unlink($file . '.exp');
-        @unlink($file . '.snip');
+        if (file_exists($file . '.snip')) {
+            unlink($file . '.snip');
+        }
     }
 
     public function getEnvironmentTests()

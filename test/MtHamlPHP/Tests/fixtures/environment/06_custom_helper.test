@@ -6,16 +6,22 @@ echo $env->compileString($parts['HAML'], "$file.haml");
 
 --HAML--
 :haml
-  use_runtime => false
-  enable_escaper => false
-  escape_attrs => true
-  i.class.helper=> <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>
-  i.id.helper=> <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>
-  i.custom_attr.helper => <?php /* %1$s.%2$s */ echo custom_attr('%1$s','%2$s',%3$s) ?>
-  class.helper => <?php /* %1$s.%2$s */ echo all_class('%1$s','%2$s',%3$s) ?>
-  id.helper => <?php /* %1$s.%2$s */ echo all_id('%1$s','%2$s',%3$s) ?>
-  custom.helper => <?php /* %1$s.%2$s */ echo all_attr('%1$s','%2$s',%3$s) ?>
-  data-.helper => <?php /* %1$s.%2$s */ echo render_data('%1$s','%2$s',%3$s) ?>
+  use_runtime : false
+  enable_escaper : false
+  escape_attrs : true
+  helpers:
+      'i' : #<i> tag only
+        class       : <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>    # class attribute
+        id          : <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>    # id attribute
+        custom_attr : <?php /* %1$s.%2$s */ echo custom_attr('%1$s','%2$s',%3$s) ?>     # attribute named "custom_attr"
+      '*':
+        class       : <?php /* %1$s.%2$s */ echo all_class('%1$s','%2$s',%3$s) ?>
+        id          : <?php /* %1$s.%2$s */ echo all_id('%1$s','%2$s',%3$s) ?>
+        data-       : <?php /* %1$s.%2$s */ echo render_data('%1$s','%2$s',%3$s) ?>
+        '*'         : <?php /* %1$s.%2$s */ echo all_attr('%1$s','%2$s',%3$s) ?>        #all attributes
+      a:
+        '*'         : <?php /* %1$s.%2$s */ echo all_attr('%1$s','%2$s',%3$s) ?>        #all attributes of tag <a>
+
 :php <?
   function my_walk_recursive(array $array, &$fl, $path = 'data') {
       foreach ($array as $k => $v) {
@@ -46,6 +52,7 @@ echo $env->compileString($parts['HAML'], "$file.haml");
 %i{:data=>['c'=>$c,'d'=>$d,'inset'=>['e'=>$e,'f'=>$f]]}
 %i#id.a.b{:id=>[$c,'2'],:class=>['c','d'] }
 %i{:custom_attr=>['a','b']}
+%a#a-id.b{:data=>['c'=>1,'d'=>2],:id=>'e'}
 
 
 --EXPECT--
@@ -80,6 +87,7 @@ echo $env->compileString($parts['HAML'], "$file.haml");
 <i <?php /* i.data */ echo all_attr('i','data',array(['c'=>$c,'d'=>$d,'inset'=>['e'=>$e,'f'=>$f]])) ?> ></i>
 <i <?php /* i.id */ echo render_array('i','id',array('id',[$c,'2'])) ?>  <?php /* i.class */ echo render_array('i','class',array('a','b',['c','d'])) ?> ></i>
 <i <?php /* i.custom_attr */ echo custom_attr('i','custom_attr',array(['a','b'])) ?> ></i>
+<a <?php /* a.id */ echo all_attr('a','id',array('a-id','e')) ?>  <?php /* a.class */ echo all_attr('a','class',array('b')) ?>  <?php /* a.data */ echo all_attr('a','data',array(['c'=>1,'d'=>2])) ?> ></a>
 
 --EXECUTED--
 <i class="a b c d-php e-php" ></i>
@@ -89,4 +97,5 @@ echo $env->compileString($parts['HAML'], "$file.haml");
 <i data-c="c-php" data-d="d-php" data-inset-e="e-php" data-inset-f="f-php" ></i>
 <i id="id c-php 2"  class="a b c d" ></i>
 <i custom_attr="a b" ></i>
+<a id="a-id e"  class="b"  data-c="1" data-d="2" ></a>
 

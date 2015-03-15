@@ -5,7 +5,7 @@ echo $env->compileString($parts['HAML'], "$file.haml");
 
 --HAML--
 :haml
-    use_runtime=>false
+    use_runtime :   false
 :php
     $str='a/';
 %a{:href=>"#{$str}&page=1"}

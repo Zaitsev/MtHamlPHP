@@ -36,6 +36,10 @@ class Environment extends \MtHamlMore\Environment
 
         $this->options[$k] = $v ;
     }
+    public function getOption($name)
+    {
+        return isset($this->options[$name]) ?  $this->options[$name] : null;
+    }
     public function getFilter($name)
     {
         //vlz+ remove php open tag if present;

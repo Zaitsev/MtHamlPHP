@@ -1,0 +1,20 @@
+--FILE--
+<?php
+$env = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+$env->addFilter('haml', new MtHamlPHP\Filter\Haml());
+echo $env->compileString($parts['HAML'], "$file.haml");
+
+--HAML--
+:haml
+  use_runtime    :  false
+  enable_escaper :  false
+  halpers:
+    i :
+        class: <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>
+    i :
+        id :   <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>
+%i text
+
+--EXPECT--
+<i>text</i>
+

@@ -2,10 +2,10 @@
 
 namespace MtHamlPHP\Target;
 
-use MtHamlPHP\Target\Php;
-use MtHamlPHP\NodeVisitor\PhpRenderer;
-use MtHamlPHP\Environment;
-use MtHamlMore\Parser;
+use MtHaml\Target\Php;
+use MtHamlPHP\NodeVisitor\PhpRenderer as PhpRenderer;
+use MtHamlPHP\Environment as Environment;
+use MtHamlPHP\Parser;
 
 class PhpMore extends Php
 {

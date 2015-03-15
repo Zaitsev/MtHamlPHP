@@ -74,13 +74,11 @@ rendered
 ```
 
 ##new tag :haml 
-### compiler settings
+### compiler settings - we use [Symphony YAML](http://symfony.com/doc/current/components/yaml/introduction.html)
 ```haml
 %i.a.b{:class=>['c',$e]}
 :haml
-  use_runtime => false
-  enable_escaper => true
-  escape_attrs => true
+  escape_attrs : true
 %i.a.b{:class=>['c',$e]}
 ```
 rendered
@@ -89,47 +87,68 @@ rendered
 <i class="a b <?php echo ( htmlspecialchars( implode(' ',array('c',$d)),ENT_QUOTES,"UTF-8")) ;?>"></i>
 ```
 
-###custom helper functions per HTML tag,attribute or tag & attribute
+###custom helper functions can be defined at compile time
 #####common syntax is  
-> `tag_name.attribute_name.helper` to `<tag_name attribute_name="value">`
-
-> `tag.helper` to render all attributes of `<tag_name>`
-
-> `attribute_name.helper` to render attribute with name _attribute_name_ for all tags 
+```yaml
+helpers:
+  'i' :         #<i> tag only
+    class       : <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>    # class attribute of tag <i>
+    id          : <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>    # id attribute of tag <i>
+    custom_attr : <?php /* %1$s.%2$s */ echo custom_attr('%1$s','%2$s',%3$s) ?>     # attribute named "custom_attr" of tag <i>
+    
+  '*':          #all tags          
+    class       : <?php /* %1$s.%2$s */ echo all_class('%1$s','%2$s',%3$s) ?>    
+    id          : <?php /* %1$s.%2$s */ echo all_id('%1$s','%2$s',%3$s) ?>
+    data-       : <?php /* %1$s.%2$s */ echo render_data('%1$s','%2$s',%3$s) ?>
+    '*'         : <?php /* %1$s.%2$s */ echo all_attr('%1$s','%2$s',%3$s) ?>        #all attributes of all tags
+  a:            #<a> tag only
+    '*'         : <?php /* %1$s.%2$s */ echo all_attr('%1$s','%2$s',%3$s) ?>        #all attributes of tag <a>
+```        
+The order of lookup - tag.attribute, tag.*, *.attribute, *.*
 
 custom helper (renderer) implemented  similar to:
 ```php
 echo sprintf('code',$tag_name,$attribte_name,$attribute_value) 
 ```
 for example:
-> `i.class.helper` used to render all `<i>` tags _class_ attribute
-
-> `i.id.helper` used to render all `<i>` tags _id_ attribute
-
-> `i.custom_attr.helper` used to render all `<i>` tags attributes named _custom_attr_
-
-> `data-.helper`  used to render any tag _data_ attribute
-
-> `class.helper` used to render _class_ attribute for all tags
-
-> `custom.helper` used to render any attribute of all tags
-
 ```haml
-:haml
-  use_runtime => false
-  enable_escaper => false
-  i.class.helper=> <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>
-  i.id.helper=> <?php /* %1$s.%2$s */ echo render_array('%1$s','%2$s',%3$s) ?>  
-:php  
+:php
   function render_array($tag,$attr,$arr){
-      $fl=array() ; array_walk_recursive($arr, function($i,$k) use (&$fl) {$fl[]=$i;});  echo attr.'="'.implode(' ',$fl).'"';
+      $fl=array() ;
+      array_walk_recursive(
+        $arr
+        , function($i,$k) use (&$fl)
+            {
+	            $fl[]=$i;
+            }
+      );
+      echo $attr.'="'.implode(' ',$fl).'"';
    }
-%i#id.a.b{:id=>[$c,'2'],:class=>['c','d'] }
+:haml
+  helpers:
+    i :
+        class: <?php echo render_array('%1$s','%2$s',%3$s) ?>
+    i :
+        id :   <?php echo render_array('%1$s','%2$s',%3$s) ?>
+%i.a.b{class=>['c','d']} text
 ```
-render
+rendered to 
 ```php
-<i <?php /* i.id */ echo render_array('i','id',array('id',[$c,'2'])) ?>  <?php /* i.class */ echo render_array('i','class',array('a','b',['c','d'])) ?> ></i>
+<i <?php echo render_array('i','class',array('a','b',['c','d'])) ?> >text</i>
 ```
+and executed to 
+```html
+<i class="a b c d" >text</i>
+```
+
+
+####custom helpers used only for interpolated attributes
+
+> `%tag.a.b` will **not** use helpers to render _class_ attribute
+
+>  `%tag.a{:class=>[$c,$d]}` will use custom helper
+   
+   
 ### runtme engine selection 
 ```haml
 :haml
@@ -172,3 +191,4 @@ rendered
 see 06_Custom_helper.test in test/fixtures/environment directory
 
 ##all credits to [Arnaud Le Blanc](https://github.com/arnaud-lb/MtHaml) and [scil](https://github.com/scil/MtHamlMore)
+
