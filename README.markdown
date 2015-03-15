@@ -74,7 +74,7 @@ rendered
 ```
 
 ##new tag :haml 
-### compiler settings - we use [Symphony YAML](http://symfony.com/doc/current/components/yaml/introduction.html)
+### compiler settings - we use [Symfony YAML](http://symfony.com/doc/current/components/yaml/introduction.html)
 ```haml
 %i.a.b{:class=>['c',$e]}
 :haml
@@ -86,7 +86,36 @@ rendered
 <i class="a b <?php echo( implode(' ',array('c',$e))) ;?>"></i>
 <i class="a b <?php echo ( htmlspecialchars( implode(' ',array('c',$d)),ENT_QUOTES,"UTF-8")) ;?>"></i>
 ```
+### Shortcuts
+this inspired by [Slim Shortcuts](http://www.rubydoc.info/gems/slim/frames#Shortcuts)
 
+define shortcut to render tag with attribute:
+```haml
+:haml
+    shortcut:
+        '?':
+            tag : input
+            attr : type
+?text.a
+```     
+rendered
+```html
+<input class="a" type="text">
+```       
+
+You can use shortcuts to render attributes of any tags:
+```haml
+:haml
+    shortcut:
+        '@':
+            attr: [class,role,data-role]
+%a.cls@admin
+```
+rednder
+```html
+<a class="cls admin" role="admin" data-role="admin"></a>
+```
+#### You can not use PHP code in shortcuts
 ###custom helper functions can be defined at compile time
 #####common syntax is  
 ```yaml
@@ -142,7 +171,7 @@ and executed to
 ```
 
 
-####custom helpers used only for interpolated attributes
+####custom helpers used only for interpolated (parsed) attributes
 
 > `%tag.a.b` will **not** use helpers to render _class_ attribute
 
@@ -191,4 +220,5 @@ rendered
 see 06_Custom_helper.test in test/fixtures/environment directory
 
 ##all credits to [Arnaud Le Blanc](https://github.com/arnaud-lb/MtHaml) and [scil](https://github.com/scil/MtHamlMore)
+
 

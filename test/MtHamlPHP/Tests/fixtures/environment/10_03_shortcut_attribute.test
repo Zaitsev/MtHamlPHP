@@ -1,0 +1,22 @@
+--FILE--
+<?php
+$env = new MtHamlPHP\Environment('php');
+$env->addFilter('haml', new MtHamlPHP\Filter\Haml());
+echo $env->compileString($parts['HAML'], "$file.haml");
+--HAML--
+:haml
+    shortcut:
+        '?' :
+            attr: role
+        '&':
+            attr: role
+        '@':
+            attr: [role,data-role]
+.person?admin != $person.name
+#id&system
+%a.cls@admin
+--EXPECT--
+<div class="person" role="admin"><?php echo $person.name; ?></div>
+<div id="id" role="system"></div>
+<a class="cls" role="admin" data-role="admin"></a>
+

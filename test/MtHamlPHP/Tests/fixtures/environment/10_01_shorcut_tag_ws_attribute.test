@@ -6,10 +6,20 @@ echo $env->compileString($parts['HAML'], "$file.haml");
 --HAML--
 :haml
     shortcut:
-        '?':
+        '&' :
             tag : input
             attr : type
-?text.a
+        '?' :
+            tag  : p
+            attr : class
+        '@':
+            tag  : i
+            attr: id
+&text.a
+?p-class.c(class="p2")
+@admin
 --EXPECT--
 <input class="a" type="text">
+<p class="c p2 p-class"></p>
+<i id="admin"></i>
 

@@ -1,0 +1,22 @@
+--FILE--
+<?php
+$env = new MtHamlPHP\Environment('php');
+$env->addFilter('haml', new MtHamlPHP\Filter\Haml());
+echo $env->compileString($parts['HAML'], "$file.haml");
+--HAML--
+:haml
+    shortcut:
+        '.' :
+            tag: p
+            attr : class
+        '#' :
+            tag: i
+            attr : id
+
+.person != $person.name
+#i_id
+
+--EXPECT--
+<p class="person"><?php echo $person.name; ?></p>
+<i id="i_id"></i>
+
