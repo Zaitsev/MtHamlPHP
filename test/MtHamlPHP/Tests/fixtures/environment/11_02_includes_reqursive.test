@@ -1,0 +1,28 @@
+--FILE--
+<?php
+$haml = new MtHamlPHP\Environment('php', array('includes_dir' => dirname(__FILE__)));
+echo $haml->compileString($parts['HAML'], $more_options);
+echo $haml->getOption('file1')."\n";
+echo $haml->getOption('file2')."\n";
+echo $haml->getOption('file3')."\n";
+echo $haml->getOption('file4')."\n";
+echo $haml->getOption('use_runtime')."\n";
+echo $haml->getOption('reduce_runtime')."\n";
+echo $haml->getOption('not_rewrite_by_f3')."\n";
+
+
+--HAML--
+:haml
+    includes:
+        - ./00-snip-01.yaml
+        - ./00-snip-02.yaml
+    reduce_runtime  : inline
+--EXPECT--
+file1
+file2
+file3
+file4
+f2
+inline
+f1
+

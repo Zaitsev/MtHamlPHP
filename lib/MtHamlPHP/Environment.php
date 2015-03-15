@@ -27,7 +27,10 @@ class Environment extends \MtHamlMore\Environment
         'preserve' => 'MtHaml\\Filter\\Preserve',
     );
 
-
+    public function __construct($target, array $options = array(), $filters = array())
+    {
+        parent::__construct($target,$options,$filters);
+    }
 
     public function setOption($k, $v)
     {

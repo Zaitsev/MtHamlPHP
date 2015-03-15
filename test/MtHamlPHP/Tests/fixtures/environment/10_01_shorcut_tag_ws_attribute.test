@@ -1,7 +1,6 @@
 --FILE--
 <?php
 $env = new MtHamlPHP\Environment('php');
-$env->addFilter('haml', new MtHamlPHP\Filter\Haml());
 echo $env->compileString($parts['HAML'], "$file.haml");
 --HAML--
 :haml

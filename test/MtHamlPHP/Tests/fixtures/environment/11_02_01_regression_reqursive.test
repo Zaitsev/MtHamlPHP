@@ -1,0 +1,31 @@
+--FILE--
+<?php
+$haml = new MtHamlPHP\Environment('php', array('includes_dir' => dirname(__FILE__)));
+echo $haml->compileString($parts['HAML'], $more_options);
+//print_r($haml->getOptions());
+print_r($haml->getOption('merge_recursive'));
+--HAML--
+:haml
+    includes: [ ./00-snip-01.yaml , ./00-snip-02.yaml ]
+--EXPECT--
+Array
+(
+    [key4] => Array
+        (
+            [key_4_added] => k4.4
+            [key_4_overvriten] => must_be_overvriten_by_k1
+            [key4] => k1.4
+        )
+
+    [key3] => must_be_2
+    [key2] => k2
+    [key3_1] => Array
+        (
+            [key_From_3_remain] => k3.3
+            [key_From_3_overriten] => must_be_overvriten_by_k2
+            [key_From_2] => k2.3
+        )
+
+    [key1] => must_be_overwriten_by_2
+)
+

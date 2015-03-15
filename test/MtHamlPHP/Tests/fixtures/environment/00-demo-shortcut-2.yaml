@@ -1,0 +1,4 @@
+shortcut:
+        '@':
+            attr: [role,data-role]
+file2 : f2

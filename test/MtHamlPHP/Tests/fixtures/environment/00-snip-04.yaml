@@ -1,0 +1,5 @@
+file4 : file4
+merge_recursive:
+  key4: {key_4_added:k4.4,key_4_overvriten:must_be_not_this}
+  key3: {2: k4.3}
+  key2: K4.2

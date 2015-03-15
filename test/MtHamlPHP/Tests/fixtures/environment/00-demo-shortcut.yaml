@@ -1,0 +1,6 @@
+enable_escaper: false
+shortcut:
+        '?':
+            tag: input
+            attr: type
+includes: ./00-demo-shortcut-2.yaml

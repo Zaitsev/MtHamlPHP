@@ -74,7 +74,49 @@ rendered
 ```
 
 ##new tag :haml 
-### compiler settings - we use [Symfony YAML](http://symfony.com/doc/current/components/yaml/introduction.html)
+This section used to manage Run-time settings of compiler. You can change mostly any behavior or haml-parser and render options.
+
+for `:haml` section  [YAML](http://symfony.com/doc/current/components/yaml/yaml_format.html)  syntax used.
+_Symfony YAML Component used to parse configs._
+### imports
+You an use `imports:` directive to include config files;
+
+file config-1.yaml :
+```yaml
+enable_escaper: false
+shortcut:
+        '?':
+            tag: input
+            attr: type
+includes: ./config-2.yaml
+```
+file config-2.yaml:
+```yaml
+
+shortcut:
+        '@':
+            attr: [role,data-role]
+```
+_for more info about `shortcut:` directive see below._
+
+```haml
+:haml
+    includes: ./config-1.yaml
+?text.a(value="#{$name}")
+%a.cls@admin some text
+```
+render
+```html
+<input class="a" value="<?php echo($name) ;?>" type="text">
+<a class="cls" role="admin" data-role="admin">some text</a>
+```
+use `includes_dir` option to set relative path to include configs.
+```php
+new MtHamlPHP\Environment('php', array('includes_dir' => dirname(__FILE__)));
+```
+
+### compiler settings 
+You can set or change MtHaml Environment options:
 ```haml
 %i.a.b{:class=>['c',$e]}
 :haml
@@ -116,7 +158,9 @@ rednder
 <a class="cls admin" role="admin" data-role="admin"></a>
 ```
 #### You can not use PHP code in shortcuts
-###custom helper functions can be defined at compile time
+###Custom helper functions 
+you can use own functions to render attributes
+And yes, you can  define them in `:haml` section
 #####common syntax is  
 ```yaml
 helpers:

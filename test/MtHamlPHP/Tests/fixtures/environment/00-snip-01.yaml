@@ -1,0 +1,7 @@
+file1 : file1
+use_runtime     : f1
+reduce_runtime  : f1
+not_rewrite_by_f3: f1
+merge_recursive:
+  key1: must_be-not_thist
+  key4: {key4: k1.4, key_4_overvriten:must_be_overvriten_by_k1}

@@ -1,15 +1,13 @@
 --FILE--
 <?php
-$env = new MtHamlPHP\Environment('php');
-$env->addFilter('haml', new MtHamlPHP\Filter\Haml());
-echo $env->compileString($parts['HAML'], "$file.haml");
+$haml = new MtHamlPHP\Environment('php', array('includes_dir' => dirname(__FILE__)));
+echo $haml->compileString($parts['HAML'], $more_options);
 --HAML--
 :haml
-    shortcut:
-        '?':
-            tag : input
-            attr : type
-?text.a
+    includes: ./00-demo-shortcut.yaml
+?text.a(value="#{$name}")
+%a.cls@admin some text
 --EXPECT--
-<input class="a" type="text">
+<input class="a" value="<?php echo($name) ;?>" type="text">
+<a class="cls" role="admin" data-role="admin">some text</a>
 

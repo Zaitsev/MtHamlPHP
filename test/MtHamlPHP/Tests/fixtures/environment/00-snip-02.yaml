@@ -1,0 +1,10 @@
+file2 : file2
+use_runtime     : f2
+reduce_runtime  : f2
+merge_recursive:
+  key1: must_be_overwriten_by_2
+  key2: k2
+  key3: must_be_2
+  key3_1: {key_From_2: k2.3,key_From_3_overriten: must_be_overvriten_by_k2}
+includes:
+  - ./00-snip-03.yaml
