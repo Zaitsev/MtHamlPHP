@@ -84,11 +84,11 @@ class Haml extends Plain
 
     protected function renderFilter(Renderer $renderer, Filter $node)
     {
-        /** @var  $renderer \MtHamlPHP\NodeVisitor\PhpRenderer */
+
         $yaml = "runtime:\n" . self::getContent($node);
         $array = Yaml::parse($yaml);
         if (is_array($array['runtime'])) {
-            $array = self::__do_includesYaml($array['runtime'], $renderer->env);
+            $array = self::__do_includesYaml($array['runtime'], $renderer->getEnv());
             self::__setOptionRenderer($array, $renderer);
         }
 //        Dbg::emsgd($renderer->env->getOptions());

@@ -1,7 +1,7 @@
 --FILE--
 <?php
 $filter = new MtHaml\Filter\Scss(new scssc);
-$env = new MtHamlPHP\Environment('twig', array('enable_escaper' => false), array('scss' => $filter));
+$env = new MtHaml\Environment('twig', array('enable_escaper' => false), array('scss' => $filter));
 echo $env->compileString($parts['HAML'], "$file.haml");
 
 --HAML--

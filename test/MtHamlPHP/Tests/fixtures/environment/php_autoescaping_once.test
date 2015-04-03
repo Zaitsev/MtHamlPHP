@@ -1,6 +1,6 @@
 --FILE--
 <?php
-$env = new MtHamlPHP\Environment('php', array(
+$env = new MtHaml\Environment('php', array(
     'enable_escaper' => true,
     'escape_attrs' => 'once',
 ));

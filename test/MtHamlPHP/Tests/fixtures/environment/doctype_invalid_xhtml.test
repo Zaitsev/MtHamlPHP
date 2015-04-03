@@ -1,6 +1,6 @@
 --FILE--
 <?php
-$env = new MtHamlPHP\Environment('twig', array('enable_escaper' => false, 'format' => 'xhtml'));
+$env = new MtHaml\Environment('twig', array('enable_escaper' => false, 'format' => 'xhtml'));
 echo $env->compileString($parts['HAML'], "$file.haml");
 
 --HAML--

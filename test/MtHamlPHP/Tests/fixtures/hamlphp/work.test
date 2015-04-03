@@ -1,44 +1,18 @@
---SNIP--
-<?php
-$box=<<<S
-.title
-    @@@title
-.body
-    @@@body
-%a.c
-S;
-?>
 --FILE--
 <?php
- $options =  array(
-      'enable_escaper' => false
-      ,"cdata"=>false
-  );
-  $more_options = array(
-      'debug'=>false,
-      'uses'=>"$file.snip",
-      'filename'=>"$file.haml",
-      'reduce_runtime'=>false,
-      "reduce_runtime_array_tolerant"=>false,
-  );
-$haml = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
-echo $haml->compileString($parts['HAML'], $more_options);
+$env = new MtHamlPHP\Environment('php', array('enable_escaper' => false));
+echo $env->compileString($parts['HAML'], "$file.haml");
+
 
 --HAML--
 :haml
-    use_runtime     : false
-    reduce_runtime  : false
-@box
-    _title this is title
-    _body
-        %p content
-
+    use_runtime     :   true
+#div{:class => array($position,$item2['type'], $item2['urgency']) }
+:haml
+    use_runtime     :   false
+#div{:class => array($position,$item2['type'], $item2['urgency']) }
 
 --EXPECT--
-<div class="title">
-  this is title
-</div>
-<div class="body">
-  <p>content</p>
-</div>
+<div <?php echo MtHaml\Runtime::renderAttributes(array(array('id', 'div'), array('class', (array($position,$item2['type'], $item2['urgency'])))), 'html5', 'UTF-8', false); ?>></div>
+<div id="div" class="<?php echo( implode(' ',array($position,$item2['type'], $item2['urgency']))) ;?>"></div>
 

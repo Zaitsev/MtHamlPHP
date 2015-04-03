@@ -7,21 +7,12 @@ echo $env->compileString($parts['HAML'], "$file.haml");
 --HAML--
 :haml
     use_runtime     :   true
-    reduce_runtime  :   false
 #div{:class => array($position,$item2['type'], $item2['urgency']) }
 :haml
-    use_runtime     :   true
-    reduce_runtime  :   true
-    reduce_runtime_array_tolerant   : true
-#div{:class => array($position,$item2['type'], $item2['urgency']) }
-:haml
-    use_runtime     :   true
-    reduce_runtime  :   true
-    reduce_runtime_array_tolerant   : false
+    use_runtime     :   false
 #div{:class => array($position,$item2['type'], $item2['urgency']) }
 
 --EXPECT--
 <div <?php echo MtHaml\Runtime::renderAttributes(array(array('id', 'div'), array('class', (array($position,$item2['type'], $item2['urgency'])))), 'html5', 'UTF-8', false); ?>></div>
-<div id="div"<?php \MtHamlMoreRuntime\Runtime::renderAttribute('class',array($position,$item2['type'],$item2['urgency']) ,false,true,''); ?>></div>
-<div id="div"<?php \MtHamlMoreRuntime\Runtime::renderAttribute('class',array($position,$item2['type'],$item2['urgency']) ,false,false,''); ?>></div>
+<div id="div" class="<?php echo( implode(' ',array($position,$item2['type'], $item2['urgency']))) ;?>"></div>
 

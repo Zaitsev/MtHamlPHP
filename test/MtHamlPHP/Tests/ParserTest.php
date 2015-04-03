@@ -13,24 +13,23 @@ class ParserTest extends TestCase
     public function testParser($file)
     {
         $parts = $this->parseTestFile($file);
-        $describe=pathinfo($file);
-        $describe="===== ".$describe['filename']." ====";
+
         try {
             $parser = new Parser;
             $node = $parser->parse($parts['HAML'], $file, 2);
 
             $renderer = new Printer;
             $node->accept($renderer);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->assertException($parts, $e);
         }
         $this->assertException($parts);
 
         file_put_contents($file . '.out', $renderer->getOutput());
 
-        $this->assertSame($parts['EXPECT'], $renderer->getOutput(),$describe);
+        $this->assertSame($parts['EXPECT'], $renderer->getOutput());
 
-        unlink($file . '.out');
+        @unlink($file . '.out');
     }
 
     public function getParserFixtures()
@@ -40,9 +39,9 @@ class ParserTest extends TestCase
         } else {
             $files = glob(__DIR__ . '/fixtures/parser/*.test');
         }
-        return array_map(function($file) {
+
+        return array_map(function ($file) {
             return array($file);
         }, $files);
     }
 }
-

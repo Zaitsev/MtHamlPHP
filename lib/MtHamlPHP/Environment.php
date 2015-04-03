@@ -3,8 +3,8 @@
 namespace MtHamlPHP;
 
 use MtHamlPHP\Dbg;
-//use MtHamlPHP\Target\Php;
-use MtHamlPHP\Target\PhpMore;
+use MtHaml\Target\Twig;
+use MtHamlPHP\Target\PhpMore as Php;
 
 //use MtHaml\Target\Twig;
 //use MtHaml\NodeVisitor\Escaping as EscapingVisitor;
@@ -14,7 +14,7 @@ use MtHamlPHP\NodeVisitor\MergeAttrs;
 //use MtHaml\Filter\FilterInterface;
 use \MtHaml\Exception;
 
-class Environment extends \MtHamlMore\Environment
+class Environment extends \MtHaml\Environment
 {
     protected $filters = array(
         'haml' => 'MtHamlPHP\\Filter\\Haml',
@@ -25,6 +25,8 @@ class Environment extends \MtHamlMore\Environment
         'php' => 'MtHaml\\Filter\\Php',
         'plain' => 'MtHaml\\Filter\\Plain',
         'preserve' => 'MtHaml\\Filter\\Preserve',
+        'twig' => 'MtHaml\\Filter\\Twig',
+
     );
 
     public function __construct($target, array $options = array(), $filters = array())
@@ -41,7 +43,7 @@ class Environment extends \MtHamlMore\Environment
             $v = false;
         }
         if ($k == 'reduce_runtime') $this->noReduceRuntime = !$v;
-        elseif ($k == 'reduce_runtime_array_tolerant') $this->reduceRuntimeArrayTolerant = $v;
+
 
         $this->options[$k] = $v;
     }
@@ -78,15 +80,12 @@ class Environment extends \MtHamlMore\Environment
         $target = $this->target;
         if (is_string($target)) {
             switch ($target) {
-                case 'php_more':
-                    $target = new PhpMore;
-                    break;
                 case 'php':
-                    $target = new PhpMore;
+                    $target = new Php;
                     break;
-//                case 'twig':
-//                    $target = new Twig;
-//                    break;
+                case 'twig':
+                    $target = new Twig;
+                    break;
                 default:
                     throw new \MtHaml\Exception(sprintf('Unknown target language: %s', $target));
             }
@@ -96,7 +95,7 @@ class Environment extends \MtHamlMore\Environment
     }
 
 
-    protected function prepare($string, $filename)
+    protected function ___prepare($string, $filename)
     {
         $prepareWork = false;
 
