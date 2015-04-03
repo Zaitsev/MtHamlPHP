@@ -1,0 +1,12 @@
+
+%p(foo="bar" #{test})
+%p(#{test} foo="bar")
+%p(#{test})
+%p(bar="baz" #{test} foo="bar")
+%p(bar="baz" #{test} class="abc #{def}")
+
+%p{:foo=>"bar", #{test}}
+%p{#{test}, :foo=>"bar"}
+%p{#{test}}
+%p{:bar=>"baz", #{test}, :foo=>"bar"}
+%p{:bar=>"baz", #{test}, :class=>"abc #{def}"}

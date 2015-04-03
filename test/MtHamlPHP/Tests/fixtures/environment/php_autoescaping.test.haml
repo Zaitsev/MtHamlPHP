@@ -1,0 +1,6 @@
+%html
+    %body{:some=> "attr& #{$foo}"}
+        %p{"#{$foo}" => "foo"}(z=$x)
+            = "escaped"
+            &= "escaped"
+            != "not escaped"

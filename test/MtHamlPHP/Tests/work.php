@@ -68,7 +68,7 @@ class Work extends TestCase
         if (false !== $tests = getenv('ENV_TESTS')) {
             $files = explode(' ', $tests);
         } else {
-            $files = glob(__DIR__ . '/fixtures/environment/work.test');
+            $files = glob(__DIR__ . '/fixtures/hamlphp/work.test');
         }
         return array_map(function($file) {
             return array($file);

@@ -1,0 +1,4 @@
+  shortcode:
+    a:
+      class:
+        ['a-class']
