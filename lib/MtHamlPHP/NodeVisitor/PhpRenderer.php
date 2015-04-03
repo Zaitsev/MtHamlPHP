@@ -10,38 +10,20 @@ use MtHaml\Node\NodeAbstract;
 use MtHaml\Node\ObjectRefId;
 use MtHaml\Node\TagAttributeInterpolation;
 
-class PhpRenderer extends \MtHamlMore\NodeVisitor\PhpRenderer
+class PhpRenderer extends \MtHaml\NodeVisitor\PhpRenderer
 //class PhpRenderer extends \MtHamlPHP\Ext\MtHamlMore\PhpRenderer
 {
     public $env;
+	public $getEnv;
     public $reduceRuntimeArrayTolerant=false;
-    /**
-     * @param Tag $tag
-     */
-    public function envSetOption($k, $v)
-    {
-        if ($v === 'true' ) {$v = true;}
-        if ($v === 'false' ) {$v = false;}
-        if ($k == 'reduce_runtime_array_tolerant' ) {
-            //!! parent reduceRuntimeArrayTolerant is protected !!.
-            $class = new \ReflectionClass('\MtHamlMore\NodeVisitor\PhpRenderer');
-            $property = $class->getProperty("reduceRuntimeArrayTolerant");
-            $property->setAccessible(true);
-            $property->setValue($this,$v);
-        }
-//        if ($k=='uses')
-//        {
-//            $snipHouse = $this->env->currentMoreEnv->getSnipHouse();
-//            $snipHouse->addUse($v);
-//
-//            Dbg::emsgd($snipHouse->getUses());
-//            //echo (dirname($this->env->currentMoreEnv['filename']));
-//        }
-        $this->env->setOption($k, $v);
+
+    public function __construct(Environment $env){
+        parent::__construct($env);
+
     }
-//    public function __construct(Environment $env){
-//        parent::__construct($env);
-//    }
+	/**
+	 * @return Environment
+	 */
 
     protected function renderDynamicAttributes(Tag $tag)
     {

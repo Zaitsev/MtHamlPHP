@@ -7,5 +7,6 @@ vendor/
 *.prepare.haml
 *.test.exp
 *.test.php
+*.test.out
 examples/tmp*
 examples/snips/tmp*

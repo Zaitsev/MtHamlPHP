@@ -1,6 +1,6 @@
 --FILE--
 <?php
-$env = new MtHamlPHP\Environment('php', array('enable_escaper' => false, 'mthaml_variable' => '$mthaml'));
+$env = new MtHaml\Environment('php', array('enable_escaper' => false, 'mthaml_variable' => '$mthaml'));
 echo $env->compileString($parts['HAML'], "$file.haml");
 
 --HAML--

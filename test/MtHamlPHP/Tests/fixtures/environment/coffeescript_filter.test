@@ -1,7 +1,7 @@
 --FILE--
 <?php
 $filter = new MtHaml\Filter\CoffeeScript(new CoffeeScript\Compiler);
-$env = new MtHamlPHP\Environment('twig', array('enable_escaper' => false), array('coffee' => $filter));
+$env = new MtHaml\Environment('twig', array('enable_escaper' => false), array('coffee' => $filter));
 echo $env->compileString($parts['HAML'], "$file.haml");
 
 --HAML--

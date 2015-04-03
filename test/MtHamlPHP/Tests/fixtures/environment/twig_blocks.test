@@ -10,7 +10,7 @@
   
 --FILE--
 <?php
-$env = new MtHamlPHP\Environment('twig', array('enable_escaper' => false));
+$env = new MtHaml\Environment('twig', array('enable_escaper' => false));
 echo $env->compileString($parts['HAML'], "$file.haml");
 
 --EXPECT--
