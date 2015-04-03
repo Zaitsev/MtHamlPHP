@@ -28,13 +28,14 @@
       "cebe/markdown": "~1",
       "kzykhys/ciconia": "~1",
       "fluxbb/commonmark": "~1@dev",
-      "gregwar/rst": "~1"
+      "gregwar/rst": "~1",
+      "phpunit/phpunit": "4.3.5"
     },
     "conflict": {
         "mthaml/mthaml-bundle": "<1.1.0"
     },
     "autoload": {
-        "classmap": ["lib/MtHamlPHP/Node/Tag.php","lib/MtHamlPHP/NodeVisitor/RendererAbstract.php"],
+        "classmap": ["lib/MtHamlPHP/Node/Tag.php"],
         "psr-0": {
             "MtHamlPHP\\": "lib/"
         }

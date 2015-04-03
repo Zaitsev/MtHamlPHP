@@ -9,6 +9,7 @@ use MtHaml\NodeVisitor\RendererAbstract as Renderer;
 use MtHaml\Node\Filter;
 use MtHaml\Exception;
 use MtHaml\Filter\Plain;
+use ReflectionClass;
 
 class Haml extends Plain
 {
@@ -23,13 +24,13 @@ class Haml extends Plain
             $env->setOption($key, $val);
         }
     }
-    static private function __setOptionRenderer(Array  $arr,  Renderer $renderer)
+    static private function __setOptionRenderer(Array  $arr,  Environment $env)
     {
         /**
          * @var  $renderer \MtHamlPHP\NodeVisitor\PhpRenderer
          */
         foreach ($arr as $key => $val) {
-            $renderer->envSetOption($key, $val);
+            $env->setOption($key, $val);
         }
     }
 
@@ -87,9 +88,16 @@ class Haml extends Plain
 
         $yaml = "runtime:\n" . self::getContent($node);
         $array = Yaml::parse($yaml);
+
+		//patching to access enviroment
+	    $class = new ReflectionClass("MtHaml\NodeVisitor\RendererAbstract");
+	    $property = $class->getProperty("env");
+	    $property->setAccessible(true);
+
+
         if (is_array($array['runtime'])) {
-            $array = self::__do_includesYaml($array['runtime'], $renderer->getEnv());
-            self::__setOptionRenderer($array, $renderer);
+            $array = self::__do_includesYaml($array['runtime'], $renderer->env);
+            self::__setOptionRenderer($array,  $renderer->env);
         }
 //        Dbg::emsgd($renderer->env->getOptions());
     }
