@@ -10,8 +10,8 @@ require_once __DIR__ . '/TestCase.php';
 
 class HamlPHPTest extends TestCase
 {
-    /** @dataProvider getEnvironmentTests */
-    public function testEnvironment($file)
+    /** @dataProvider getHamlPHPTests */
+    public function testHamlPHP($file)
     {
         $parts = $this->parseTestFile($file);
         $describe=pathinfo($file);
@@ -66,7 +66,7 @@ class HamlPHPTest extends TestCase
         }
     }
 
-    public function getEnvironmentTests()
+    public function getHamlPHPTests()
     {
         if (false !== $tests = getenv('ENV_TESTS')) {
             $files = explode(' ', $tests);
