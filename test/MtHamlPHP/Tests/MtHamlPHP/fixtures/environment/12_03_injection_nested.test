@@ -1,0 +1,27 @@
+--FILE--
+<?php
+$o=new stdClass();
+$o->class='ob-cl';
+$env = new MtHamlPHP\Environment('php',array('includes_dir' => dirname(__FILE__)));
+echo $env->compileString($parts['HAML'], "$file.haml");
+--HAML--
+@require injections/injection_nested.haml
+    @require injections/injection_nested.haml
+        @require injections/injection_nested.haml
+--EXPECT--
+<div id="nested">
+  <div id="simple1">
+    <div id="simple2"></div>
+  </div>
+  <div id="nested">
+    <div id="simple1">
+      <div id="simple2"></div>
+    </div>
+    <div id="nested">
+      <div id="simple1">
+        <div id="simple2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,18 @@
+--FILE--
+<?php
+$o=new stdClass();
+$o->class='ob-cl';
+$env = new MtHamlPHP\Environment('php',array('includes_dir' => dirname(__FILE__)));
+echo $env->compileString($parts['HAML'], "$file.haml");
+--HAML--
+@require injections/injection_simple.haml
+#next
+    #inline
+--EXPECT--
+<div id="simple1">
+  <div id="simple2"></div>
+</div>
+<div id="next">
+  <div id="inline"></div>
+</div>
+

@@ -1,0 +1,21 @@
+--FILE--
+<?php
+$o=new stdClass();
+$o->class='ob-cl';
+$env = new MtHamlPHP\Environment('php',array('includes_dir' => dirname(__FILE__)));
+echo $env->compileString($parts['HAML'], "$file.haml");
+--HAML--
+@require injections/injection_indent_in_parent.haml
+    @require injections/injection_indent_in_parent.haml
+        @require injections/injection_indent_in_parent.haml
+--EXPECT--
+<div id="indent1">
+  <div id="sindent2"></div>
+  <div id="indent1">
+    <div id="sindent2"></div>
+    <div id="indent1">
+      <div id="sindent2"></div>
+    </div>
+  </div>
+</div>
+

@@ -6,20 +6,14 @@ use MtHaml\Node\Tag;
 use MtHamlPHP\Filter\Haml;
 use MtHaml\Node\Text;
 use MtHaml\Node\TagAttribute;
+use ReflectionClass;
 
 /**
  * MtHamlPHP Parser
  */
 class Parser extends \MtHaml\Parser {
 	// add Envirmonent object, MtHaml-More  see README.md : Development Rool 2
-	private  $env;
-
-	/**
-	 * @return \MtHaml\Environment
-	 */
-	public function getEnv() {
-		return $this->env;
-	}
+	private $env;
 
 	public function __construct( \MtHaml\Environment $env = null ) {
 		parent::__construct();
@@ -27,7 +21,7 @@ class Parser extends \MtHaml\Parser {
 	}
 
 	protected function parseStatement( $buf ) {
-		//first parse filters, so we can parse :haml with confit first
+		//first parse filters, so we can parse :haml with configs first
 //        Dbg::emsgd($this->env->getOptions());
 		if ( null !== $node = $this->parseFilter( $buf ) ) {
 			if ( $node->getFilter() == 'haml' ) {
@@ -41,14 +35,18 @@ class Parser extends \MtHaml\Parser {
 	}
 
 	protected function parseTagAttributesShortcut( $buf ) {
+		/**
+		 * @var $buf \MtHaml\Parser\Buffer
+		 */
 		$attrs = array();
 		// short notation for classes and ids
 
 		$arr = $this->env->getOption( 'shortcut' );
-		if ( empty( $arr ) ) {
-			return parent::parseTagAttributes( $buf );
-		}
-		//$arr=[];
+//		Dbg::emsgd($arr);
+//		if ( empty( $arr ) ) {
+//			return parent::parseTagAttributes( $buf );
+//		}
+		//add default . and # as shortcut
 		if ( empty( $arr['.'] ) || ! empty( $arr['.']['tag'] ) ) {
 			$arr['.'] = array( 'attr' => 'class' );
 		}
@@ -63,7 +61,6 @@ class Parser extends \MtHaml\Parser {
 				$shortcuts[ $s ] = $p;
 			}
 		}
-//        echo Dbg::emsgds($shortcuts);
 		$prefixes = implode( '|', $prefixes );
 		while ( $buf->match( '/(?P<type>' . $prefixes . ')(?P<name>[\w-]+)/A', $match ) ) {
 			if ( ! empty( $shortcuts[ $match['type'] ]['attr'] ) ) {
@@ -132,21 +129,102 @@ class Parser extends \MtHaml\Parser {
 		return $attrs;
 	}
 
-	protected function parseTag( $buf ) {
-		$arr = $this->env->getOption( 'shortcut' );
-		if ( empty( $arr ) ) {
-			return parent::parseTag( $buf );
+	function path_is_absolute( $path ) {
+		/*
+		 * This is definitive if true but fails if $path does not exist or contains
+		 * a symbolic link.
+		 */
+		if ( realpath( $path ) == $path ) {
+			return true;
 		}
+
+		if ( strlen( $path ) == 0 || $path[0] == '.' ) {
+			return false;
+		}
+
+		// Windows allows absolute paths like this.
+		if ( preg_match( '#^[a-zA-Z]:\\\\#', $path ) ) {
+			return true;
+		}
+
+		// A path starting with / or \ is absolute; anything else is relative.
+		return ( $path[0] == '/' || $path[0] == '\\' );
+	}
+
+	protected function injectFile( $buf, $type ) {
+		/**
+		 * @var $buf \MtHaml\Parser\Buffer
+		 */
+
+		$class    = new ReflectionClass( get_parent_class() );
+		$property = $class->getProperty( "indent" );
+		$property->setAccessible( true );
+		$path = trim( $buf->getLine() );
+		if ( null == $base_dir = $this->env->getOption( 'includes_dir' ) ) {
+			$base_dir = getcwd();
+		};
+		$filename = false;
+		if ( ( $this->path_is_absolute( $path ) && file_exists( $path ) ) ) {
+			$filename = $path;
+		} elseif ( file_exists( trim( $base_dir ) . DIRECTORY_SEPARATOR . $path ) ) {
+			$filename = trim( $base_dir ) . DIRECTORY_SEPARATOR . $path;
+		} elseif ( 'require' === $type ) {
+			throw $this->syntaxError( $buf, "@require $path : file not found \n  includes_dir: $base_dir\n " . $base_dir . DIRECTORY_SEPARATOR . $path . "\n" );
+		}
+		$inj = @file_get_contents( $filename, true );
+		if ( $inj !== false ) {
+
+			$this->injectLines( $buf, $inj );
+
+			return null;//restart Parser
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param $buf \MtHaml\Parser\Buffer
+	 * @param $string string - multi-line string to inject
+	 */
+	protected function injectLines( $buf, $string ) {
+		$level   = $this->indent->getLevel();
+		$prepend = str_repeat( $this->indent->getChar(), $level * $this->indent->getWidth() );
+		$lines   = preg_split( '~\r\n|\n|\r~', $string );
+		$lines   = array_map(
+			function ( $v ) use ( $prepend ) {
+				return $prepend . $v;
+			},
+			array_filter( $lines, function ( $v ) {
+				return ! empty( $v );
+			} )
+		);
+		if ( empty( $lines ) ) {
+			return false;
+		}
+
+		return $buf->injectLines( $lines, 1 );
+	}
+
+	protected function parseTag( $buf ) {
+		$arr = (array) $this->env->getOption( 'shortcut' );
+//		if ( empty( $arr ) ) {
+//			return parent::parseTag( $buf );
+//		}
 		$shortcuts  = array();
 		$prefixes[] = '\%';
+
 		foreach ( $arr as $s => $p ) {
 			if ( ! empty( $p['tag'] ) ) {
 				$prefixes[]      = '\\' . $s;
 				$shortcuts[ $s ] = $p;
 			}
 		}
+		//inject @include and @require
+		$shortcuts['@'][] = 'include';
+		$shortcuts['@'][] = 'require';
+		$prefixes[]       = '\@';
 
-		$prefixes = implode( '|', $prefixes );
+		$prefixes = implode( '|', array_unique( $prefixes ) );
 //        Dbg::emsgd($prefixes); return;
 		$tagRegex = '/
             (?P<shortcut>' . $prefixes . ')(?P<tag_name>[\w:-]+)  # explicit tag name ( %tagname )
@@ -159,6 +237,10 @@ class Parser extends \MtHaml\Parser {
 			$new_type = null;
 			$tag_name = empty( $match['tag_name'] ) ? 'div' : $match['tag_name'];
 			if ( ! empty( $shortcuts[ $match['shortcut'] ] ) ) {
+				//@include adn @require
+				if ( '@' === $match['shortcut'] && ( 'require' === $match['tag_name'] || 'include' === $match['tag_name'] ) ) {
+					return $this->injectFile( $buf, $match['tag_name'] );
+				}
 				$params   = $shortcuts[ $match['shortcut'] ];
 				$tag_name = $params['tag'];
 				//Dbg::emsgd($params['tag']);

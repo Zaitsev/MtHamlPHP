@@ -1,0 +1,41 @@
+--FILE--
+<?php
+$env = new MtHamlPHP\Environment('php');
+echo $env->compileString($parts['HAML'], "$file.haml");
+--HAML--
+:haml
+    shortcut:
+        '@' :
+            tag : input
+            attr : type
+        '@@' :
+            tag  : p
+            attr : class
+        '@@@':
+            tag  : i
+            attr: id
+@text
+@@p-class
+@@@i-id
+:haml
+    shortcut:
+        '@' :
+            tag : input
+            attr : type
+        '@@@':
+            tag  : i
+            attr: id
+        '@@' :
+            tag  : p
+            attr : class
+@text
+@@p-class
+@@@i-id
+--EXPECT--
+<input type="text">
+<p class="p-class"></p>
+<i id="i-id"></i>
+<input type="text">
+<p class="p-class"></p>
+<i id="i-id"></i>
+

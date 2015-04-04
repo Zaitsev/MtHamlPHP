@@ -90,7 +90,7 @@ class Haml extends Plain
         $array = Yaml::parse($yaml);
 
 		//patching to access enviroment
-	    $class = new ReflectionClass("MtHaml\NodeVisitor\RendererAbstract");
+	    $class = new ReflectionClass(get_class($renderer));
 	    $property = $class->getProperty("env");
 	    $property->setAccessible(true);
 

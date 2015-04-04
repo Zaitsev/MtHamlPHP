@@ -6,25 +6,25 @@ use MtHaml\Parser;
 use MtHaml\NodeVisitor\Printer;
 use MtHamlPHP\Dbg;
 
-require_once __DIR__ . '/TestCase.php';
+require_once __DIR__ . './TestCase.php';
 //error_reporting(E_ALL);
-
+/**
+ * Class HamlPHPTest
+ * @package MtHamlPHP\Tests
+ */
 class HamlPHPTest extends TestCase
 {
     /** @dataProvider getHamlPHPTests */
     public function testHamlPHP($file)
     {
         $parts = $this->parseTestFile($file);
-        echo "$describe\n";
         file_put_contents($file . '.haml', $parts['HAML']);
         file_put_contents($file . '.php', $parts['FILE']);
         file_put_contents($file . '.exp', $parts['EXPECT']);
         if (isset( $parts['SNIP'])) file_put_contents($file . '.snip', $parts['SNIP']);
 
         if (!empty($parts['SKIP'])) {
-            $this->markTestIncomplete(
-                $describe.':'.$parts['SKIP']
-            );
+            $this->markTestIncomplete('skipped');
             return;
         }
 
@@ -41,7 +41,7 @@ class HamlPHPTest extends TestCase
 
         file_put_contents($file . '.out', $out);
 
-        $this->assertSame($parts['EXPECT'], $out,$describe);
+        $this->assertSame($parts['EXPECT'], $out);
 
         if (isset($parts['EXECUTED'])) {
             ob_start();
@@ -70,7 +70,7 @@ class HamlPHPTest extends TestCase
         if (false !== $tests = getenv('ENV_TESTS')) {
             $files = explode(' ', $tests);
         } else {
-            $files = glob(__DIR__ . '/fixtures/hamlphp/*.test');
+            $files = glob(__DIR__ . '/MtHamlPHP/fixtures/environment/*.test');
         }
 	    $t = array();
 	    foreach ($files as $file){
