@@ -21,7 +21,7 @@ echo $env->compileString($parts['HAML'], "$file.haml");
 <style type="text/css">
 /*<![CDATA[*/
 p {
-  color: blue;
+  color: #0000ff;
 }
 
 /*]]>*/

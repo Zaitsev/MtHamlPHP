@@ -6,7 +6,7 @@ MtHaml is a PHP implementation of the [HAML language](http://haml.info/) which c
 This is fork based on MtHaml and MtHaml-more (both runtimes supported if needed)
 Main target of this fork - implement compiling haml files to php in IDE (to not use any runtime).
 ### differences
-This implementation based on and supports all features of [MtHaml](https://github.com/arnaud-lb/MtHaml) and [MtHaml-more](https://github.com/scil/MtHamlMore) and adds many new features.
+This implementation based on and supports all features of [MtHaml](https://github.com/arnaud-lb/MtHaml) and adds many new own.
 But its focused mostly to **compile haml files to plain PHP**, not to be used as template engine.
 
 You can use [grunt task](https://github.com/Zaitsev/grunt-mthamlphp-vlz) and [IDEA plugin](https://github.com/Zaitsev/mthamlphp-idea-plugin) to compile haml to php when editing haml-file in IDE.
@@ -18,7 +18,9 @@ to allow IDE recognize php code in :php section you can use it as
 ```
 ## simplified array definitions 
     `['c','d']` is equeal to `array('c','d')`
+    
     all statements are equial:
+    
     ```haml
     %i{:data=>['a'=>'a','b'=>$c, 'e'=> true ? $c : $e]}
     %i{:data=>{'a'=>'a','b'=>$c, 'e'=> true ? $c : $e}}
@@ -177,11 +179,11 @@ helpers:
   a:            #<a> tag only
     '*'         : <?php /* %1$s.%2$s */ echo all_attr('%1$s','%2$s',%3$s) ?>        #all attributes of tag <a>
 ```        
-The order of lookup - tag.attribute, tag.*, *.attribute, *.*
+The order of lookup - `tag.attribute`, `tag.*`, `*.attribute`, `*.*`
 
 custom helper (renderer) implemented  similar to:
 ```php
-echo sprintf('code',$tag_name,$attribte_name,$attribute_value) 
+echo sprintf('string_with_function_call',$tag_name,$attribte_name,$attribute_value) 
 ```
 for example:
 ```haml
@@ -201,8 +203,6 @@ for example:
   helpers:
     i :
         class: <?php echo render_array('%1$s','%2$s',%3$s) ?>
-    i :
-        id :   <?php echo render_array('%1$s','%2$s',%3$s) ?>
 %i.a.b{class=>['c','d']} text
 ```
 rendered to 
@@ -217,45 +217,34 @@ and executed to
 
 ####custom helpers used only for interpolated (parsed) attributes
 
-> `%tag.a.b` will **not** use helpers to render _class_ attribute
+> `%tag.a.b` **will not** use helpers to render _class_ attribute
 
->  `%tag.a{:class=>[$c,$d]}` will use custom helper
+>  `%tag.a{:class=>[$c,$d]}` **will** use custom helper
    
    
 ### runtme engine selection 
 `use_runtime`  - if true, compiler will use standart runtime
 
-`reduce_runtime` if false, compiler will use MtHaml runtime, if true MtHamlMore runtime
-
-see MtHaml-More and MtHaml for more info of runtime usage;
-
+see MtHaml documentation for more info of runtime usage;
 
 ```haml
 :haml
     use_runtime=>true
-    reduce_runtime=>false
 #div{:class => array($position,$item2['type'], $item2['urgency']) }
 :haml
-    use_runtime=>true
-    reduce_runtime=>true
-    reduce_runtime_array_tolerant=>true
-#div{:class => array($position,$item2['type'], $item2['urgency']) }
-:haml
-    use_runtime=>true
-    reduce_runtime=>true
-    reduce_runtime_array_tolerant=>false
+    use_runtime=>false
 #div{:class => array($position,$item2['type'], $item2['urgency']) }
 ```
 render
 ```php
 <div <?php echo MtHaml\Runtime::renderAttributes(array(array('id', 'div'), array('class', (array($position,$item2['type'], $item2['urgency'])))), 'html5', 'UTF-8', false); ?>></div>
-<div id="div"<?php \MtHamlMoreRuntime\Runtime::renderAttribute('class',array($position,$item2['type'],$item2['urgency']) ,false,true,''); ?>></div>
-<div id="div"<?php \MtHamlMoreRuntime\Runtime::renderAttribute('class',array($position,$item2['type'],$item2['urgency']) ,false,false,''); ?>></div>
+<div id="div" <?php echo( implode(' ',array($position,$item2['type'], $item2['urgency']))) ;?>></div>
 ```
 #####_see 06_Custom_helper.test in test/fixtures/environment directory for more custom helpers examples_
 
 ##added input type
-you can use any type as :type_value after input tag
+you can use any type as :type_value for `type="type_value"` after input tag:
+
 ```haml
 %input:text.cls
 %input:submit#id(value="valu")

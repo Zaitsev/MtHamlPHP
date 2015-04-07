@@ -1,1 +1,4 @@
-//todo add base pach or inludes path
+//add base pach or inludes path
+//todo create includes cache
+//todo prevent recursive inclusion with cache help
+//todo SNIP via @include
