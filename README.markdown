@@ -74,6 +74,26 @@ rendered
 <i class="a b <?php echo( implode(' ',array('c','d'))) ;?>"></i>
 <i class="a b <?php echo( implode(' ',array('c','d', true ? 'e': 'f', false ? 'g':'h'))) ;?>"></i>
 ```
+## includes
+You can include or require haml partials
+```haml
+-#file partial.haml
+%p
+    %i Included
+
+-#file main.haml
+.posts
+	@@inlude partial.haml
+```	
+this is same as 
+```haml
+.posts
+    %p
+        %i Included
+    
+```    
+use `@@inlude /path/file` to inlude  or `@@require /path/file` to require files.
+if file not found, `require` will throw error and stop processing, `include` will not.
 
 ##new tag :haml 
 This section used to manage Run-time settings of compiler. You can change mostly any behavior or haml-parser and render options.
